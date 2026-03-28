@@ -9,147 +9,133 @@
 <title>ColorVision AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#080808; --surface:#101010; --surface2:#181818;
-  --border:rgba(255,255,255,0.07); --accent:#C8FF00; --accent2:#00FFB2;
-  --text:#F0F0F0; --muted:rgba(240,240,240,0.4);
-  --font-ui:'Syne',sans-serif; --font-mono:'Space Mono',monospace;
+:root{
+  --bg:#080808;--surface:#101010;--surface2:#181818;
+  --border:rgba(255,255,255,0.07);--accent:#C8FF00;--accent2:#00FFB2;
+  --text:#F0F0F0;--muted:rgba(240,240,240,0.4);
+  --font:'Syne',sans-serif;--mono:'Space Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font-ui)}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font)}
 body{display:flex;flex-direction:column}
 
-/* HTTPS WARNING */
-#httpsWarn{display:none;position:fixed;inset:0;background:var(--bg);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:32px;text-align:center}
+#httpsWarn{display:none;position:fixed;inset:0;background:var(--bg);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:32px;text-align:center}
 #httpsWarn.show{display:flex}
-.warn-title{font-size:1.4rem;font-weight:800;color:var(--accent)}
-.warn-box{background:var(--surface2);border:1px solid rgba(200,255,0,0.25);border-radius:16px;padding:20px;font-size:.85rem;line-height:2;color:var(--accent);text-align:left;width:100%;max-width:340px}
+.warn-box{background:var(--surface2);border:1px solid rgba(200,255,0,.25);border-radius:16px;padding:18px;font-size:.84rem;line-height:2;color:var(--accent);text-align:left;width:100%;max-width:320px}
 .warn-box b{color:#fff}
 
-/* HEADER */
-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;z-index:40;position:relative}
-.logo{display:flex;align-items:center;gap:10px}
-.logo-mark{width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px}
-.logo-text{font-size:1.05rem;font-weight:800;letter-spacing:-.04em}
+header{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;z-index:40}
+.logo{display:flex;align-items:center;gap:9px}
+.logo-mark{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.logo-text{font-size:1rem;font-weight:800;letter-spacing:-.04em}
 .logo-text em{color:var(--accent);font-style:normal}
-.logo-badge{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#080808;font-size:.58rem;font-weight:700;letter-spacing:.1em;padding:2px 8px;border-radius:50px;margin-left:4px}
+.logo-badge{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#080808;font-size:.56rem;font-weight:700;letter-spacing:.1em;padding:2px 7px;border-radius:50px;margin-left:4px}
+.header-right{display:flex;align-items:center;gap:8px}
 
-/* LANG */
 .lang-wrap{position:relative}
-.lang-btn{background:var(--surface2);border:1px solid var(--border);border-radius:50px;padding:7px 12px;color:var(--text);font-size:.78rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:var(--font-ui)}
-.lang-dd{position:absolute;top:calc(100% + 8px);right:0;background:#1a1a1a;border:1px solid var(--border);border-radius:14px;overflow:hidden;min-width:168px;z-index:100;display:none;box-shadow:0 20px 50px rgba(0,0,0,.8)}
+.lang-btn{background:var(--surface2);border:1px solid var(--border);border-radius:50px;padding:6px 11px;color:var(--text);font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:var(--font)}
+.lang-dd{position:absolute;top:calc(100% + 6px);right:0;background:#1a1a1a;border:1px solid var(--border);border-radius:14px;overflow:hidden;min-width:160px;z-index:100;display:none;box-shadow:0 20px 50px rgba(0,0,0,.8)}
 .lang-dd.open{display:block}
-.lang-opt{padding:11px 15px;cursor:pointer;font-size:.83rem;display:flex;align-items:center;gap:9px;border-bottom:1px solid rgba(255,255,255,.05)}
+.lang-opt{padding:10px 14px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.05)}
 .lang-opt:last-child{border-bottom:none}
 .lang-opt:hover{background:rgba(255,255,255,.04)}
 .lang-opt.active{color:var(--accent)}
 
-/* CAMERA */
-.cam{flex:1;position:relative;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:0}
+.btn-cfg{background:var(--surface2);border:1px solid var(--border);border-radius:50px;padding:6px 11px;color:var(--muted);font-size:.8rem;cursor:pointer;display:flex;align-items:center;gap:5px}
+.btn-cfg:active{opacity:.7}
+
+.cam{flex:1;position:relative;background:#000;overflow:hidden;min-height:0}
 video{width:100%;height:100%;object-fit:cover;display:block}
 canvas{display:none}
 #overlay-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:11;display:none}
 
-/* START OVERLAY */
-.ov{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;text-align:center;z-index:20}
+.ov{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px;text-align:center;z-index:20}
 .ov.gone{display:none}
-.ov-icon{font-size:3.5rem}
-.ov-title{font-size:1.2rem;font-weight:800;letter-spacing:-.03em}
-.ov-msg{font-size:.87rem;line-height:1.65;color:var(--muted);max-width:300px}
+.ov-icon{font-size:3rem}
+.ov-title{font-size:1.15rem;font-weight:800}
+.ov-msg{font-size:.85rem;line-height:1.65;color:var(--muted);max-width:280px}
 .ov-msg.err{color:#ff6b6b}
-.btn-start{margin-top:6px;background:var(--accent);color:#080808;border:none;border-radius:50px;padding:15px 34px;font-size:1rem;font-weight:700;cursor:pointer;font-family:var(--font-ui)}
+.btn-start{background:var(--accent);color:#080808;border:none;border-radius:50px;padding:14px 32px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:var(--font);margin-top:4px}
 .btn-start:active{opacity:.85}
 .btn-start:disabled{opacity:.4;cursor:default}
 
-/* API KEY PANEL */
-.api-panel{position:absolute;inset:0;background:rgba(8,8,8,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;z-index:30}
+.api-panel{position:absolute;inset:0;background:rgba(8,8,8,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:28px;z-index:30}
 .api-panel.hidden{display:none}
-.api-title{font-size:1.1rem;font-weight:800}
-.api-msg{font-size:.82rem;color:var(--muted);text-align:center;max-width:280px;line-height:1.6}
-.api-input-wrap{width:100%;max-width:340px;position:relative}
-.api-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 44px 12px 14px;color:var(--text);font-size:.83rem;font-family:var(--font-mono);outline:none}
+.api-title{font-size:1.05rem;font-weight:800}
+.api-msg{font-size:.8rem;color:var(--muted);text-align:center;max-width:270px;line-height:1.6}
+.api-input-wrap{width:100%;max-width:330px;position:relative}
+.api-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:11px 42px 11px 13px;color:var(--text);font-size:.82rem;font-family:var(--mono);outline:none}
 .api-input:focus{border-color:rgba(200,255,0,.4)}
 .api-input::placeholder{color:rgba(240,240,240,.2)}
-.toggle-key{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:1rem}
-.btn-api{background:var(--accent);color:#080808;border:none;border-radius:50px;padding:12px 28px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:var(--font-ui);width:100%;max-width:340px}
+.toggle-key{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:.95rem}
+.btn-api{background:var(--accent);color:#080808;border:none;border-radius:50px;padding:11px 26px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:var(--font);width:100%;max-width:330px}
 .btn-api:hover{opacity:.88}
-.api-note{font-size:.72rem;color:rgba(240,240,240,.25);text-align:center;max-width:280px;line-height:1.5}
+.api-note{font-size:.7rem;color:rgba(240,240,240,.22);text-align:center;max-width:270px;line-height:1.5}
 
-/* SCAN LINE */
-.scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.4;animation:scanline 3s linear infinite;pointer-events:none;z-index:9;display:none}
-@keyframes scanline{from{top:0}to{top:100%}}
+/* SCAN BUTTON - floating */
+.btn-scan{
+  position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
+  background:var(--accent);color:#080808;border:none;border-radius:50px;
+  padding:14px 34px;font-size:1rem;font-weight:800;cursor:pointer;
+  font-family:var(--font);z-index:15;display:none;
+  align-items:center;gap:9px;letter-spacing:-.02em;
+  box-shadow:0 4px 24px rgba(200,255,0,.4);
+  transition:transform .12s,opacity .12s;
+}
+.btn-scan.visible{display:flex}
+.btn-scan:active{transform:translateX(-50%) scale(.96)}
+.btn-scan:disabled{opacity:.45;cursor:default;box-shadow:none}
+.scan-ring{width:17px;height:17px;border-radius:50%;border:2.5px solid rgba(0,0,0,.4);border-top-color:rgba(0,0,0,.9);animation:spin .7s linear infinite;display:none}
+.btn-scan.loading .scan-ring{display:block}
+.btn-scan.loading .scan-icon{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* FROZEN */
-.fbadge{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#080808;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 15px;border-radius:50px;z-index:15;display:none}
-.fbadge.show{display:block}
-
-/* PROCESSING */
-.proc-badge{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(8,8,8,.85);border:1px solid var(--border);border-radius:50px;padding:7px 16px;font-size:.72rem;font-weight:600;letter-spacing:.06em;z-index:15;display:none;align-items:center;gap:7px;backdrop-filter:blur(8px);white-space:nowrap}
+.proc-badge{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(8,8,8,.82);border:1px solid var(--border);border-radius:50px;padding:6px 14px;font-size:.7rem;font-weight:600;z-index:15;display:none;align-items:center;gap:6px;backdrop-filter:blur(8px);white-space:nowrap}
 .proc-badge.show{display:flex}
-.proc-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink .8s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.proc-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink .8s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
 
-/* PANEL */
-.panel{background:var(--surface);border-top:1px solid var(--border);padding:12px 14px 16px;display:flex;flex-direction:column;gap:10px;flex-shrink:0;overflow-y:auto;max-height:50vh}
+.panel{background:var(--surface);border-top:1px solid var(--border);padding:11px 14px 14px;display:flex;flex-direction:column;gap:9px;flex-shrink:0;overflow-y:auto;max-height:46vh}
 .panel::-webkit-scrollbar{width:3px}
 .panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
-/* TABS */
-.mode-tabs{display:flex;background:var(--surface2);border-radius:10px;padding:3px;gap:3px}
-.tab{flex:1;padding:8px 6px;text-align:center;font-size:.72rem;font-weight:600;border-radius:8px;cursor:pointer;color:var(--muted);white-space:nowrap;transition:all .15s}
-.tab.active{background:var(--accent);color:#080808}
-
-/* CONTROLS */
-.ctrl-bar{display:flex;align-items:center;gap:8px}
-.btn-analyze{flex:1;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#080808;border:none;border-radius:12px;padding:12px 16px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:var(--font-ui);display:flex;align-items:center;justify-content:center;gap:7px}
-.btn-analyze:active{opacity:.85}
-.btn-analyze:disabled{opacity:.4;cursor:default}
-.btn-fz{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:.82rem;font-weight:600;cursor:pointer;font-family:var(--font-ui);display:flex;align-items:center;gap:6px;white-space:nowrap}
-.btn-fz:active{opacity:.8}
-.btn-fz.on{background:var(--accent);color:#080808;border-color:var(--accent)}
-.btn-fz:disabled{opacity:.3;cursor:default}
-
-/* SECTION LABEL */
-.section-label{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,240,240,.28)}
-
-/* OBJECTS */
-.objects-grid{display:flex;flex-direction:column;gap:7px}
-.obj-row{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:11px;animation:fadeIn .3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.obj-swatch{width:42px;height:42px;border-radius:10px;flex-shrink:0;border:1px solid rgba(255,255,255,.1)}
+.sec-lbl{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,240,240,.25)}
+.objects-grid{display:flex;flex-direction:column;gap:6px}
+.obj-row{background:var(--surface2);border:1px solid var(--border);border-radius:13px;padding:9px 11px;display:flex;align-items:center;gap:10px;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.obj-swatch{width:40px;height:40px;border-radius:9px;flex-shrink:0;border:1px solid rgba(255,255,255,.1)}
 .obj-info{flex:1;min-width:0}
-.obj-label{font-size:.78rem;font-weight:700;line-height:1.2;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.obj-color{font-size:.9rem;font-weight:800;letter-spacing:-.02em;margin-bottom:3px}
-.obj-badges{display:flex;gap:5px;flex-wrap:wrap}
-.obj-badge{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:5px;padding:2px 7px;font-family:var(--font-mono);font-size:.62rem;color:var(--muted)}
-.obj-badge.hex{color:var(--accent);border-color:rgba(200,255,0,.2)}
-.obj-note{font-size:.7rem;color:var(--muted);line-height:1.4;margin-top:3px}
+.obj-label{font-size:.76rem;font-weight:700;line-height:1.2;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.obj-color{font-size:.88rem;font-weight:800;letter-spacing:-.02em;margin-bottom:3px}
+.obj-badges{display:flex;gap:4px;flex-wrap:wrap}
+.badge{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:5px;padding:2px 6px;font-family:var(--mono);font-size:.6rem;color:var(--muted)}
+.badge.hex{color:var(--accent);border-color:rgba(200,255,0,.2)}
+.obj-note{font-size:.68rem;color:var(--muted);line-height:1.4;margin-top:3px}
 
-/* EMPTY */
-.empty-state{text-align:center;padding:16px;color:var(--muted);font-size:.82rem;line-height:1.6}
-.empty-state .es-icon{font-size:2rem;margin-bottom:6px}
+.empty-state{text-align:center;padding:14px 10px;color:var(--muted);font-size:.8rem;line-height:1.6}
+.empty-state .ei{font-size:1.8rem;margin-bottom:5px}
 
-/* HISTORY */
-.hist-row{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:3px}
+.hist-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .hist-row::-webkit-scrollbar{display:none}
-.hchip{flex-shrink:0;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:50px;padding:5px 11px 5px 5px;font-size:.7rem;color:var(--muted)}
-.hdot{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.12);flex-shrink:0}
+.hchip{flex-shrink:0;display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:50px;padding:4px 9px 4px 4px;font-size:.68rem;color:var(--muted)}
+.hdot{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.12);flex-shrink:0}
 
-/* CONFIG */
-.cfg-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.cfg-label{font-size:.78rem;color:var(--muted);line-height:1.5}
-.cfg-label b{color:var(--text);font-weight:600}
-.select-styled{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-size:.78rem;outline:none;font-family:var(--font-ui);cursor:pointer}
-.cfg-note{font-size:.72rem;color:rgba(240,240,240,.25);line-height:1.6}
+.cfg-drawer{display:none;flex-direction:column;gap:10px;padding-bottom:4px}
+.cfg-drawer.open{display:flex}
+.cfg-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cfg-lbl{font-size:.76rem;color:var(--muted)}
+.cfg-lbl b{color:var(--text);font-weight:600;display:block;margin-bottom:1px}
+.select-styled{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 9px;color:var(--text);font-size:.76rem;outline:none;font-family:var(--font);cursor:pointer}
+.cfg-note{font-size:.69rem;color:rgba(240,240,240,.22);line-height:1.55}
+.cfg-divider{height:1px;background:var(--border)}
 </style>
 </head>
 <body>
 
-<!-- HTTPS WARNING -->
 <div id="httpsWarn">
-  <div style="font-size:3rem">⚠️</div>
-  <div class="warn-title">HTTPS Necessário</div>
-  <div style="font-size:.85rem;color:var(--muted);text-align:center;max-width:290px;line-height:1.6">A câmera só funciona em páginas seguras. Hospede no Netlify Drop:</div>
+  <div style="font-size:2.8rem">⚠️</div>
+  <div style="font-size:1.2rem;font-weight:800;color:var(--accent)">HTTPS Necessário</div>
+  <div style="font-size:.83rem;color:var(--muted);max-width:280px;line-height:1.6;text-align:center">A câmera só funciona em páginas seguras.</div>
   <div class="warn-box">
     <b>1.</b> Acesse <b style="color:var(--accent)">netlify.com/drop</b><br>
     <b>2.</b> Arraste este arquivo HTML<br>
@@ -163,19 +149,22 @@ canvas{display:none}
     <div class="logo-mark">👁</div>
     <div class="logo-text">Color<em>Vision</em><span class="logo-badge">AI</span></div>
   </div>
-  <div class="lang-wrap">
-    <button class="lang-btn" onclick="toggleDD()">
-      <span id="lf">🇧🇷</span><span id="lc">PT</span><span style="font-size:.55rem;opacity:.4">▼</span>
-    </button>
-    <div class="lang-dd" id="dd">
-      <div class="lang-opt active" onclick="setLang('pt')">🇧🇷 &nbsp;Português</div>
-      <div class="lang-opt" onclick="setLang('en')">🇺🇸 &nbsp;English</div>
-      <div class="lang-opt" onclick="setLang('es')">🇪🇸 &nbsp;Español</div>
-      <div class="lang-opt" onclick="setLang('fr')">🇫🇷 &nbsp;Français</div>
-      <div class="lang-opt" onclick="setLang('de')">🇩🇪 &nbsp;Deutsch</div>
-      <div class="lang-opt" onclick="setLang('it')">🇮🇹 &nbsp;Italiano</div>
-      <div class="lang-opt" onclick="setLang('ja')">🇯🇵 &nbsp;日本語</div>
-      <div class="lang-opt" onclick="setLang('zh')">🇨🇳 &nbsp;中文</div>
+  <div class="header-right">
+    <button class="btn-cfg" onclick="toggleCfg()">⚙️</button>
+    <div class="lang-wrap">
+      <button class="lang-btn" onclick="toggleDD()">
+        <span id="lf">🇧🇷</span><span id="lc">PT</span><span style="font-size:.5rem;opacity:.4">▼</span>
+      </button>
+      <div class="lang-dd" id="dd">
+        <div class="lang-opt active" onclick="setLang('pt')">🇧🇷 &nbsp;Português</div>
+        <div class="lang-opt" onclick="setLang('en')">🇺🇸 &nbsp;English</div>
+        <div class="lang-opt" onclick="setLang('es')">🇪🇸 &nbsp;Español</div>
+        <div class="lang-opt" onclick="setLang('fr')">🇫🇷 &nbsp;Français</div>
+        <div class="lang-opt" onclick="setLang('de')">🇩🇪 &nbsp;Deutsch</div>
+        <div class="lang-opt" onclick="setLang('it')">🇮🇹 &nbsp;Italiano</div>
+        <div class="lang-opt" onclick="setLang('ja')">🇯🇵 &nbsp;日本語</div>
+        <div class="lang-opt" onclick="setLang('zh')">🇨🇳 &nbsp;中文</div>
+      </div>
     </div>
   </div>
 </header>
@@ -184,176 +173,133 @@ canvas{display:none}
   <video id="vid" autoplay playsinline muted></video>
   <canvas id="cnv"></canvas>
   <canvas id="overlay-canvas"></canvas>
-  <div class="scan" id="scan"></div>
-  <div class="fbadge" id="fb">⏸ PAUSADO</div>
-  <div class="proc-badge" id="proc"><div class="proc-dot"></div><span id="proc-txt">Analisando com IA…</span></div>
+  <div class="proc-badge" id="proc"><div class="proc-dot"></div><span id="proc-txt">Analisando…</span></div>
+
+  <button class="btn-scan" id="scanBtn" onclick="analyzeNow()" disabled>
+    <div class="scan-ring"></div>
+    <span class="scan-icon">🔍</span>
+    <span id="abTxt">Escanear</span>
+  </button>
 
   <div class="ov" id="ov">
     <div class="ov-icon">🤖</div>
     <div class="ov-title" id="ovT">ColorVision AI</div>
-    <div class="ov-msg" id="ovM">IA identifica múltiplos objetos e suas cores simultaneamente na cena.</div>
+    <div class="ov-msg" id="ovM">Aponte a câmera e toque em Escanear para identificar objetos e cores.</div>
     <button class="btn-start" id="sb" onclick="startCam()">▶ Ativar câmera</button>
   </div>
 
   <div class="api-panel hidden" id="apiPanel">
-    <div style="font-size:2.5rem">🔑</div>
-    <div class="api-title" id="apT">Chave da API Groq (gratuita)</div>
-    <div class="api-msg" id="apM">Cole sua chave do Groq para ativar a IA. É gratuita em console.groq.com</div>
+    <div style="font-size:2.2rem">🔑</div>
+    <div class="api-title" id="apT">Chave da API Groq</div>
+    <div class="api-msg" id="apM">Cole sua chave do Groq. Gratuita em console.groq.com → API Keys.</div>
     <div class="api-input-wrap">
       <input type="password" id="apiKeyInput" class="api-input" placeholder="gsk_..." autocomplete="off">
       <button class="toggle-key" onclick="toggleKeyVis()">👁</button>
     </div>
     <button class="btn-api" onclick="saveApiKey()" id="apBtn">Salvar e continuar</button>
-    <div class="api-note" id="apN">Obtenha grátis em console.groq.com → API Keys. A chave é salva localmente no dispositivo (localStorage).</div>
+    <div class="api-note" id="apN">A chave é salva localmente no dispositivo (localStorage). Gratuita em console.groq.com</div>
   </div>
 </div>
 
 <div class="panel">
-  <div class="mode-tabs">
-    <div class="tab active" id="tab-live" onclick="setMode('live')">⚡ Ao vivo</div>
-    <div class="tab" id="tab-manual" onclick="setMode('manual')">📸 Manual</div>
-    <div class="tab" id="tab-cfg" onclick="setMode('cfg')">⚙️ Config</div>
+  <div class="cfg-drawer" id="cfgDrawer">
+    <div class="cfg-row">
+      <div class="cfg-lbl"><b id="cfgDetLbl">Modo de análise</b></div>
+      <select class="select-styled" id="detailSel">
+        <option value="basic" id="dopt1">Básico</option>
+        <option value="full" selected id="dopt2">Completo</option>
+        <option value="accessibility" id="dopt3">Acessibilidade ♿</option>
+      </select>
+    </div>
+    <div class="cfg-row">
+      <div class="cfg-lbl"><b id="cfgApiLbl">API Groq</b><br><span id="cfgApiSt" style="font-size:.7rem">Não configurada</span></div>
+      <button class="btn-cfg" onclick="showApiPanel()" style="font-size:.72rem;padding:7px 11px;border-radius:9px">🔑 <span id="cfgApiBtn">Chave</span></button>
+    </div>
+    <div class="cfg-note" id="cfgNote">Modo Acessibilidade descreve as cores com comparações do cotidiano, ideal para daltônicos.</div>
+    <div class="cfg-divider"></div>
   </div>
 
-  <div class="ctrl-bar" id="ctrlBar">
-    <button class="btn-analyze" id="analyzeBtn" onclick="analyzeNow()" disabled>
-      <span>🤖</span><span id="abTxt">Analisar cena</span>
-    </button>
-    <button class="btn-fz" id="fzb" onclick="toggleFreeze()" disabled>
-      <span id="fi">⏸</span><span id="fl">Pausar</span>
-    </button>
-  </div>
-
-  <div id="resultsSection" style="display:flex;flex-direction:column;gap:7px">
-    <div class="section-label" id="resLabel">OBJETOS DETECTADOS</div>
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <div class="sec-lbl" id="resLabel">OBJETOS DETECTADOS</div>
     <div class="objects-grid" id="objectsGrid">
-      <div class="empty-state">
-        <div class="es-icon">🎨</div>
-        <span id="emptyTxt">Aponte a câmera para uma cena e toque em Analisar</span>
-      </div>
+      <div class="empty-state"><div class="ei">🎨</div><span id="emptyTxt">Aponte a câmera e toque em Escanear</span></div>
     </div>
   </div>
 
-  <div id="histSection">
-    <div class="section-label" id="histLabel" style="margin-bottom:7px">HISTÓRICO</div>
-    <div class="hist-row" id="hr">
-      <span style="font-size:.75rem;color:var(--muted)" id="he">Nenhuma análise ainda</span>
-    </div>
-  </div>
-
-  <div id="cfgSection" style="display:none;flex-direction:column;gap:12px">
-    <div class="cfg-row">
-      <div class="cfg-label"><b id="cfgApiLbl">Chave da API</b><br><span id="cfgApiSt">Não configurada</span></div>
-      <button class="btn-fz" onclick="showApiPanel()" id="cfgApiBtn">Configurar</button>
-    </div>
-    <div class="cfg-row">
-      <div class="cfg-label"><b id="cfgAutoLbl">Análise automática</b><br><span style="font-size:.72rem;opacity:.6">Intervalo entre capturas</span></div>
-      <select class="select-styled" id="intervalSel" onchange="setIntervalVal()">
-        <option value="3000">3s</option>
-        <option value="5000" selected>5s</option>
-        <option value="10000">10s</option>
-        <option value="0">Manual</option>
-      </select>
-    </div>
-    <div class="cfg-row">
-      <div class="cfg-label"><b id="cfgDetLbl">Nível de detalhe</b><br><span style="font-size:.72rem;opacity:.6">Tipo de análise</span></div>
-      <select class="select-styled" id="detailSel" onchange="setDetail()">
-        <option value="basic">Básico</option>
-        <option value="full" selected>Completo</option>
-        <option value="accessibility">Acessibilidade</option>
-      </select>
-    </div>
-    <div class="cfg-note" id="cfgNote">O modo Acessibilidade descreve cores para pessoas daltônicas, usando comparações com objetos do cotidiano.</div>
+  <div>
+    <div class="sec-lbl" id="histLabel" style="margin-bottom:6px">HISTÓRICO</div>
+    <div class="hist-row" id="hr"><span style="font-size:.73rem;color:var(--muted)" id="he">Nenhuma análise ainda</span></div>
   </div>
 </div>
 
 <script>
-// ── TRANSLATIONS ──────────────────────────────────────────
-const T = {
-  pt:{f:'🇧🇷',c:'PT',start:'▶ Ativar câmera',ovT:'ColorVision AI',ovM:'IA identifica múltiplos objetos e suas cores simultaneamente na cena.',errD:'Permissão negada. Vá em Configurações > Chrome > Permissões.',errN:'Nenhuma câmera encontrada.',errG:'Erro de câmera. Use HTTPS.',apT:'Chave da API Groq (gratuita)',apM:'Cole sua chave do Groq. Obtenha grátis em console.groq.com → API Keys.',apBtn:'Salvar e continuar',apN:'A chave é salva localmente no dispositivo (localStorage). Gratuita em console.groq.com',freeze:'Pausar',unfreeze:'Retomar',fb:'⏸ PAUSADO',analyze:'Analisar cena',analyzing:'Analisando…',resLabel:'OBJETOS DETECTADOS',histLabel:'HISTÓRICO',empty:'Aponte a câmera e toque em Analisar',he:'Nenhuma análise ainda',proc:'Analisando com IA…',tabLive:'⚡ Ao vivo',tabManual:'📸 Manual',tabCfg:'⚙️ Config',cfgApiLbl:'Chave Groq',cfgApiOk:'✓ Configurada',cfgApiNo:'Não configurada',cfgApiBtn:'Configurar',cfgAutoLbl:'Análise automática',cfgDetLbl:'Nível de detalhe',cfgNote:'O modo Acessibilidade descreve cores para daltônicos usando comparações cotidianas.'},
-  en:{f:'🇺🇸',c:'EN',start:'▶ Start Camera',ovT:'ColorVision AI',ovM:'AI identifies multiple objects and their colors simultaneously in the scene.',errD:'Permission denied. Go to Settings > Chrome > Permissions.',errN:'No camera found.',errG:'Camera error. Use HTTPS.',apT:'Groq API Key (free)',apM:'Paste your Groq key. Get it free at console.groq.com → API Keys.',apBtn:'Save & continue',apN:'Your key is saved locally on your device. Free at console.groq.com',freeze:'Freeze',unfreeze:'Resume',fb:'⏸ FROZEN',analyze:'Analyze scene',analyzing:'Analyzing…',resLabel:'DETECTED OBJECTS',histLabel:'HISTORY',empty:'Point the camera and tap Analyze',he:'No analysis yet',proc:'Analyzing with AI…',tabLive:'⚡ Live',tabManual:'📸 Manual',tabCfg:'⚙️ Config',cfgApiLbl:'Groq Key',cfgApiOk:'✓ Configured',cfgApiNo:'Not configured',cfgApiBtn:'Configure',cfgAutoLbl:'Auto-analysis',cfgDetLbl:'Detail level',cfgNote:'Accessibility mode describes colors for color-blind users with everyday comparisons.'},
-  es:{f:'🇪🇸',c:'ES',start:'▶ Activar cámara',ovT:'ColorVision AI',ovM:'IA identifica múltiples objetos y sus colores simultáneamente.',errD:'Permiso denegado. Configuración > Chrome > Permisos.',errN:'No se encontró cámara.',errG:'Error de cámara. Usa HTTPS.',apT:'Clave API Anthropic',apM:'Pega tu clave API para activar la IA.',apBtn:'Guardar y continuar',apN:'La clave se guarda localmente en tu dispositivo.',freeze:'Pausar',unfreeze:'Reanudar',fb:'⏸ PAUSADO',analyze:'Analizar escena',analyzing:'Analizando…',resLabel:'OBJETOS DETECTADOS',histLabel:'HISTORIAL',empty:'Apunta la cámara y toca Analizar',he:'Sin análisis aún',proc:'Analizando con IA…',tabLive:'⚡ En vivo',tabManual:'📸 Manual',tabCfg:'⚙️ Config',cfgApiLbl:'Clave API',cfgApiOk:'✓ Configurada',cfgApiNo:'No configurada',cfgApiBtn:'Configurar',cfgAutoLbl:'Análisis automático',cfgDetLbl:'Nivel de detalle',cfgNote:'El modo Accesibilidad describe colores para daltónicos.'},
-  fr:{f:'🇫🇷',c:'FR',start:'▶ Activer caméra',ovT:'ColorVision AI',ovM:"L'IA identifie plusieurs objets et leurs couleurs simultanément.",errD:'Permission refusée. Paramètres > Chrome > Autorisations.',errN:'Aucune caméra trouvée.',errG:'Erreur caméra. Utilisez HTTPS.',apT:'Clé API Anthropic',apM:"Collez votre clé API pour activer l'IA.",apBtn:'Enregistrer et continuer',apN:'La clé est sauvegardée localement.',freeze:'Geler',unfreeze:'Reprendre',fb:'⏸ GELÉ',analyze:'Analyser la scène',analyzing:'Analyse…',resLabel:'OBJETS DÉTECTÉS',histLabel:'HISTORIQUE',empty:'Pointez la caméra et appuyez sur Analyser',he:'Aucune analyse',proc:'Analyse en cours…',tabLive:'⚡ Direct',tabManual:'📸 Manuel',tabCfg:'⚙️ Config',cfgApiLbl:'Clé API',cfgApiOk:'✓ Configurée',cfgApiNo:'Non configurée',cfgApiBtn:'Configurer',cfgAutoLbl:'Analyse auto',cfgDetLbl:'Niveau de détail',cfgNote:"Le mode Accessibilité décrit les couleurs pour les daltoniens."},
-  de:{f:'🇩🇪',c:'DE',start:'▶ Kamera starten',ovT:'ColorVision AI',ovM:'KI erkennt mehrere Objekte und Farben gleichzeitig.',errD:'Zugriff verweigert. Einstellungen > Chrome > Berechtigungen.',errN:'Keine Kamera gefunden.',errG:'Kamerafehler. Bitte HTTPS verwenden.',apT:'Anthropic API-Schlüssel',apM:'API-Schlüssel eingeben, um KI zu aktivieren.',apBtn:'Speichern & fortfahren',apN:'Schlüssel wird nur lokal gespeichert.',freeze:'Einfrieren',unfreeze:'Fortsetzen',fb:'⏸ EINGEFROREN',analyze:'Szene analysieren',analyzing:'Analysiere…',resLabel:'ERKANNTE OBJEKTE',histLabel:'VERLAUF',empty:'Kamera richten und Analysieren tippen',he:'Noch keine Analyse',proc:'KI analysiert…',tabLive:'⚡ Live',tabManual:'📸 Manuell',tabCfg:'⚙️ Config',cfgApiLbl:'API-Schlüssel',cfgApiOk:'✓ Konfiguriert',cfgApiNo:'Nicht konfiguriert',cfgApiBtn:'Konfigurieren',cfgAutoLbl:'Auto-Analyse',cfgDetLbl:'Detailgrad',cfgNote:'Barrierefreiheitsmodus beschreibt Farben für Farbenblinde.'},
-  it:{f:'🇮🇹',c:'IT',start:'▶ Attiva fotocamera',ovT:'ColorVision AI',ovM:"L'IA identifica più oggetti e colori contemporaneamente.",errD:'Permesso negato. Impostazioni > Chrome > Autorizzazioni.',errN:'Nessuna fotocamera trovata.',errG:'Errore fotocamera. Usa HTTPS.',apT:'Chiave API Anthropic',apM:"Incolla la chiave API per attivare l'IA.",apBtn:'Salva e continua',apN:'La chiave è salvata localmente.',freeze:'Congela',unfreeze:'Riprendi',fb:'⏸ CONGELATO',analyze:'Analizza scena',analyzing:'Analisi…',resLabel:'OGGETTI RILEVATI',histLabel:'CRONOLOGIA',empty:'Punta la fotocamera e tocca Analizza',he:'Nessuna analisi',proc:'Analisi in corso…',tabLive:'⚡ Live',tabManual:'📸 Manuale',tabCfg:'⚙️ Config',cfgApiLbl:'Chiave API',cfgApiOk:'✓ Configurata',cfgApiNo:'Non configurata',cfgApiBtn:'Configura',cfgAutoLbl:'Analisi automatica',cfgDetLbl:'Livello di dettaglio',cfgNote:"La modalità Accessibilità descrive i colori per i daltonici."},
-  ja:{f:'🇯🇵',c:'JP',start:'▶ カメラを起動',ovT:'ColorVision AI',ovM:'AIが複数のオブジェクトと色を同時に識別します。',errD:'権限拒否。設定 > Chrome > 権限でカメラを許可。',errN:'カメラが見つかりません。',errG:'カメラエラー。HTTPSをご使用ください。',apT:'Anthropic APIキー',apM:'APIキーを貼り付けてAIを有効化。',apBtn:'保存して続ける',apN:'キーはローカルに保存されます。',freeze:'一時停止',unfreeze:'再開',fb:'⏸ 一時停止',analyze:'シーンを分析',analyzing:'分析中…',resLabel:'検出されたオブジェクト',histLabel:'履歴',empty:'カメラを向けて「分析」をタップ',he:'まだ分析なし',proc:'AIで分析中…',tabLive:'⚡ ライブ',tabManual:'📸 手動',tabCfg:'⚙️ 設定',cfgApiLbl:'APIキー',cfgApiOk:'✓ 設定済み',cfgApiNo:'未設定',cfgApiBtn:'設定',cfgAutoLbl:'自動分析',cfgDetLbl:'詳細レベル',cfgNote:'アクセシビリティモードは色覚障害者向けに色を説明します。'},
-  zh:{f:'🇨🇳',c:'ZH',start:'▶ 启动摄像头',ovT:'ColorVision AI',ovM:'AI同时识别场景中多个对象及其颜色。',errD:'权限被拒绝。设置 > Chrome > 权限中允许摄像头。',errN:'未找到摄像头。',errG:'摄像头错误。请使用HTTPS。',apT:'Anthropic API密钥',apM:'粘贴您的API密钥以启用AI。',apBtn:'保存并继续',apN:'密钥仅保存在设备本地。',freeze:'冻结',unfreeze:'恢复',fb:'⏸ 已冻结',analyze:'分析场景',analyzing:'分析中…',resLabel:'检测到的对象',histLabel:'历史',empty:'对准摄像头，点击分析',he:'尚无分析',proc:'AI分析中…',tabLive:'⚡ 实时',tabManual:'📸 手动',tabCfg:'⚙️ 设置',cfgApiLbl:'API密钥',cfgApiOk:'✓ 已配置',cfgApiNo:'未配置',cfgApiBtn:'配置',cfgAutoLbl:'自动分析',cfgDetLbl:'详细级别',cfgNote:'无障碍模式专为色盲用户描述颜色。'},
+const T={
+  pt:{f:'🇧🇷',c:'PT',start:'▶ Ativar câmera',ovT:'ColorVision AI',ovM:'Aponte a câmera e toque em Escanear para identificar objetos e cores.',errD:'Permissão negada. Vá em Configurações > Chrome > Permissões.',errN:'Nenhuma câmera encontrada.',errG:'Erro de câmera. Use HTTPS.',apT:'Chave da API Groq',apM:'Cole sua chave do Groq. Gratuita em console.groq.com → API Keys.',apBtn:'Salvar e continuar',apN:'A chave é salva localmente no dispositivo. Gratuita em console.groq.com',scan:'Escanear',resLabel:'OBJETOS DETECTADOS',histLabel:'HISTÓRICO',empty:'Aponte a câmera e toque em Escanear',he:'Nenhuma análise ainda',proc:'Analisando…',cfgDetLbl:'Modo de análise',cfgApiLbl:'API Groq',cfgApiOk:'✓ Configurada',cfgApiNo:'Não configurada',cfgApiBtn:'Chave',cfgNote:'Modo Acessibilidade descreve as cores com comparações do cotidiano, ideal para daltônicos.',dopt1:'Básico',dopt2:'Completo',dopt3:'Acessibilidade ♿'},
+  en:{f:'🇺🇸',c:'EN',start:'▶ Start Camera',ovT:'ColorVision AI',ovM:'Point the camera and tap Scan to identify objects and colors.',errD:'Permission denied. Go to Settings > Chrome > Permissions.',errN:'No camera found.',errG:'Camera error. Use HTTPS.',apT:'Groq API Key',apM:'Paste your Groq key. Free at console.groq.com → API Keys.',apBtn:'Save & continue',apN:'Key saved locally. Free at console.groq.com',scan:'Scan',resLabel:'DETECTED OBJECTS',histLabel:'HISTORY',empty:'Point the camera and tap Scan',he:'No analysis yet',proc:'Analyzing…',cfgDetLbl:'Analysis mode',cfgApiLbl:'Groq API',cfgApiOk:'✓ Configured',cfgApiNo:'Not configured',cfgApiBtn:'Key',cfgNote:'Accessibility mode describes colors using everyday comparisons, ideal for color-blind users.',dopt1:'Basic',dopt2:'Full',dopt3:'Accessibility ♿'},
+  es:{f:'🇪🇸',c:'ES',start:'▶ Activar cámara',ovT:'ColorVision AI',ovM:'Apunta la cámara y toca Escanear para identificar objetos y colores.',errD:'Permiso denegado. Configuración > Chrome > Permisos.',errN:'No se encontró cámara.',errG:'Error de cámara. Usa HTTPS.',apT:'Clave API Groq',apM:'Pega tu clave Groq. Gratis en console.groq.com → API Keys.',apBtn:'Guardar y continuar',apN:'Clave guardada localmente. Gratis en console.groq.com',scan:'Escanear',resLabel:'OBJETOS DETECTADOS',histLabel:'HISTORIAL',empty:'Apunta la cámara y toca Escanear',he:'Sin análisis aún',proc:'Analizando…',cfgDetLbl:'Modo de análisis',cfgApiLbl:'API Groq',cfgApiOk:'✓ Configurada',cfgApiNo:'No configurada',cfgApiBtn:'Clave',cfgNote:'El modo Accesibilidad describe colores con comparaciones cotidianas.',dopt1:'Básico',dopt2:'Completo',dopt3:'Accesibilidad ♿'},
+  fr:{f:'🇫🇷',c:'FR',start:'▶ Activer caméra',ovT:'ColorVision AI',ovM:"Pointez la caméra et appuyez sur Scanner pour identifier les objets.",errD:'Permission refusée. Paramètres > Chrome > Autorisations.',errN:'Aucune caméra trouvée.',errG:'Erreur caméra. Utilisez HTTPS.',apT:'Clé API Groq',apM:'Collez votre clé Groq. Gratuite sur console.groq.com → API Keys.',apBtn:'Enregistrer et continuer',apN:'Clé sauvegardée localement. Gratuite sur console.groq.com',scan:'Scanner',resLabel:'OBJETS DÉTECTÉS',histLabel:'HISTORIQUE',empty:'Pointez la caméra et appuyez sur Scanner',he:'Aucune analyse',proc:'Analyse…',cfgDetLbl:'Mode analyse',cfgApiLbl:'API Groq',cfgApiOk:'✓ Configurée',cfgApiNo:'Non configurée',cfgApiBtn:'Clé',cfgNote:"Le mode Accessibilité décrit les couleurs avec des comparaisons du quotidien.",dopt1:'Basique',dopt2:'Complet',dopt3:'Accessibilité ♿'},
+  de:{f:'🇩🇪',c:'DE',start:'▶ Kamera starten',ovT:'ColorVision AI',ovM:'Kamera richten und Scannen tippen, um Objekte zu erkennen.',errD:'Zugriff verweigert. Einstellungen > Chrome > Berechtigungen.',errN:'Keine Kamera gefunden.',errG:'Kamerafehler. HTTPS verwenden.',apT:'Groq API-Schlüssel',apM:'API-Schlüssel eingeben. Kostenlos auf console.groq.com → API Keys.',apBtn:'Speichern & fortfahren',apN:'Schlüssel lokal gespeichert. Kostenlos auf console.groq.com',scan:'Scannen',resLabel:'ERKANNTE OBJEKTE',histLabel:'VERLAUF',empty:'Kamera richten und Scannen tippen',he:'Noch keine Analyse',proc:'Analysiere…',cfgDetLbl:'Analysemodus',cfgApiLbl:'Groq API',cfgApiOk:'✓ Konfiguriert',cfgApiNo:'Nicht konfiguriert',cfgApiBtn:'Schlüssel',cfgNote:'Barrierefreiheitsmodus beschreibt Farben mit Alltagsvergleichen.',dopt1:'Einfach',dopt2:'Vollständig',dopt3:'Barrierefreiheit ♿'},
+  it:{f:'🇮🇹',c:'IT',start:'▶ Attiva fotocamera',ovT:'ColorVision AI',ovM:'Punta la fotocamera e tocca Scansiona per identificare oggetti.',errD:'Permesso negato. Impostazioni > Chrome > Autorizzazioni.',errN:'Nessuna fotocamera trovata.',errG:'Errore fotocamera. Usa HTTPS.',apT:'Chiave API Groq',apM:'Incolla la tua chiave Groq. Gratuita su console.groq.com → API Keys.',apBtn:'Salva e continua',apN:'Chiave salvata localmente. Gratuita su console.groq.com',scan:'Scansiona',resLabel:'OGGETTI RILEVATI',histLabel:'CRONOLOGIA',empty:'Punta la fotocamera e tocca Scansiona',he:'Nessuna analisi',proc:'Analisi…',cfgDetLbl:'Modalità analisi',cfgApiLbl:'API Groq',cfgApiOk:'✓ Configurata',cfgApiNo:'Non configurata',cfgApiBtn:'Chiave',cfgNote:'La modalità Accessibilità descrive i colori con paragoni quotidiani.',dopt1:'Base',dopt2:'Completo',dopt3:'Accessibilità ♿'},
+  ja:{f:'🇯🇵',c:'JP',start:'▶ カメラを起動',ovT:'ColorVision AI',ovM:'カメラを向けてスキャンをタップするとオブジェクトを識別します。',errD:'権限拒否。設定 > Chrome > 権限でカメラを許可。',errN:'カメラが見つかりません。',errG:'カメラエラー。HTTPSを使用してください。',apT:'Groq APIキー',apM:'Groqのキーを貼り付けてください。console.groq.comで無料取得。',apBtn:'保存して続ける',apN:'キーはローカルに保存されます。console.groq.comで無料。',scan:'スキャン',resLabel:'検出されたオブジェクト',histLabel:'履歴',empty:'カメラを向けてスキャンをタップ',he:'まだ分析なし',proc:'分析中…',cfgDetLbl:'分析モード',cfgApiLbl:'Groq API',cfgApiOk:'✓ 設定済み',cfgApiNo:'未設定',cfgApiBtn:'キー',cfgNote:'アクセシビリティモードは日常的な比較で色を説明します。',dopt1:'基本',dopt2:'完全',dopt3:'アクセシビリティ ♿'},
+  zh:{f:'🇨🇳',c:'ZH',start:'▶ 启动摄像头',ovT:'ColorVision AI',ovM:'对准摄像头，点击扫描以识别对象和颜色。',errD:'权限被拒绝。设置 > Chrome > 权限中允许摄像头。',errN:'未找到摄像头。',errG:'摄像头错误。请使用HTTPS。',apT:'Groq API密钥',apM:'粘贴您的Groq密钥。在console.groq.com免费获取。',apBtn:'保存并继续',apN:'密钥仅保存在本地。console.groq.com免费获取。',scan:'扫描',resLabel:'检测到的对象',histLabel:'历史',empty:'对准摄像头，点击扫描',he:'尚无分析',proc:'分析中…',cfgDetLbl:'分析模式',cfgApiLbl:'Groq API',cfgApiOk:'✓ 已配置',cfgApiNo:'未配置',cfgApiBtn:'密钥',cfgNote:'无障碍模式使用日常比较描述颜色，适合色盲用户。',dopt1:'基础',dopt2:'完整',dopt3:'无障碍 ♿'},
 };
 
-// ── STATE ─────────────────────────────────────────────────
-let lang='pt', frozen=false, running=false, mode='live';
-let autoInterval=5000, detailLevel='full';
-let autoTimer=null, analyzing=false;
-let lastObjects=[], analysisHistory=[];
-let apiKey='';
+let lang='pt',running=false,analyzing=false;
+let lastObjects=[],analysisHistory=[];
+let apiKey='',cfgOpen=false;
 
 const $=id=>document.getElementById(id);
-const vid=$('vid'), cnv=$('cnv');
+const vid=$('vid'),cnv=$('cnv');
 const overlayCnv=$('overlay-canvas');
 const overlayCtx=overlayCnv.getContext('2d');
 const ctx2d=cnv.getContext('2d');
 
-// ── INIT ──────────────────────────────────────────────────
 window.addEventListener('load',()=>{
-  if(location.protocol!=='https:'&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1'){
+  if(location.protocol!=='https:'&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1')
     $('httpsWarn').style.display='flex';
-  }
   apiKey=localStorage.getItem('cv_apikey')||'';
   applyLang('pt');
 });
 
-// ── LANGUAGE ──────────────────────────────────────────────
 function toggleDD(){$('dd').classList.toggle('open')}
 document.addEventListener('click',e=>{if(!e.target.closest('.lang-wrap'))$('dd').classList.remove('open')});
 function setLang(l){lang=l;applyLang(l);$('dd').classList.remove('open')}
 
 function applyLang(l){
-  lang=l;
-  const t=T[l];
-  $('lf').textContent=t.f; $('lc').textContent=t.c;
+  lang=l;const t=T[l];
+  $('lf').textContent=t.f;$('lc').textContent=t.c;
   document.querySelectorAll('.lang-opt').forEach((o,i)=>
     o.classList.toggle('active',['pt','en','es','fr','de','it','ja','zh'][i]===l));
   if(!running){$('ovT').textContent=t.ovT;$('ovM').textContent=t.ovM;$('sb').textContent=t.start}
-  $('fl').textContent=frozen?t.unfreeze:t.freeze;
-  $('fb').textContent=t.fb;
-  $('abTxt').textContent=t.analyze;
+  $('abTxt').textContent=t.scan;
+  $('proc-txt').textContent=t.proc;
   $('resLabel').textContent=t.resLabel;
   $('histLabel').textContent=t.histLabel;
-  $('proc-txt').textContent=t.proc;
   $('emptyTxt').textContent=t.empty;
   $('he').textContent=t.he;
-  $('apT').textContent=t.apT; $('apM').textContent=t.apM;
-  $('apBtn').textContent=t.apBtn; $('apN').textContent=t.apN;
-  $('tab-live').textContent=t.tabLive;
-  $('tab-manual').textContent=t.tabManual;
-  $('tab-cfg').textContent=t.tabCfg;
+  $('apT').textContent=t.apT;$('apM').textContent=t.apM;
+  $('apBtn').textContent=t.apBtn;$('apN').textContent=t.apN;
+  $('cfgDetLbl').textContent=t.cfgDetLbl;
   $('cfgApiLbl').textContent=t.cfgApiLbl;
   $('cfgApiBtn').textContent=t.cfgApiBtn;
-  $('cfgAutoLbl').textContent=t.cfgAutoLbl;
-  $('cfgDetLbl').textContent=t.cfgDetLbl;
   $('cfgNote').textContent=t.cfgNote;
+  $('dopt1').textContent=t.dopt1;
+  $('dopt2').textContent=t.dopt2;
+  $('dopt3').textContent=t.dopt3;
   updateCfgStatus();
-  if(lastObjects.length) renderObjects(lastObjects);
+  if(lastObjects.length)renderObjects(lastObjects);
   renderHist();
 }
 
-// ── API KEY ───────────────────────────────────────────────
-function showApiPanel(){
-  $('apiPanel').classList.remove('hidden');
-  $('apiKeyInput').value=apiKey;
-}
+function toggleCfg(){cfgOpen=!cfgOpen;$('cfgDrawer').classList.toggle('open',cfgOpen)}
+function showApiPanel(){$('apiPanel').classList.remove('hidden');$('apiKeyInput').value=apiKey}
 function hideApiPanel(){$('apiPanel').classList.add('hidden')}
-function toggleKeyVis(){
-  const i=$('apiKeyInput');
-  i.type=i.type==='password'?'text':'password';
-}
+function toggleKeyVis(){const i=$('apiKeyInput');i.type=i.type==='password'?'text':'password'}
 function saveApiKey(){
   const v=$('apiKeyInput').value.trim();
   if(!v)return;
-  apiKey=v;
-  localStorage.setItem('cv_apikey',v);
-  hideApiPanel();
-  updateCfgStatus();
+  apiKey=v;localStorage.setItem('cv_apikey',v);
+  hideApiPanel();updateCfgStatus();
 }
 function updateCfgStatus(){
   const t=T[lang];
@@ -361,119 +307,68 @@ function updateCfgStatus(){
   $('cfgApiSt').style.color=apiKey?'var(--accent2)':'rgba(240,240,240,.35)';
 }
 
-// ── CAMERA ────────────────────────────────────────────────
 async function startCam(){
   if(!apiKey){showApiPanel();return}
   const t=T[lang],btn=$('sb');
-  btn.disabled=true; btn.textContent='⏳…';
+  btn.disabled=true;btn.textContent='⏳…';
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-    showErr(t.errG); btn.disabled=false; btn.textContent=t.start; return;
+    showErr(t.errG);btn.disabled=false;btn.textContent=t.start;return;
   }
   try{
     const stream=await navigator.mediaDevices.getUserMedia({
-      video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},
-      audio:false
+      video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false
     });
     vid.srcObject=stream;
     vid.onloadedmetadata=()=>{
       vid.play();
-      cnv.width=vid.videoWidth||1280; cnv.height=vid.videoHeight||720;
-      overlayCnv.width=cnv.width; overlayCnv.height=cnv.height;
+      cnv.width=vid.videoWidth||1280;cnv.height=vid.videoHeight||720;
+      overlayCnv.width=cnv.width;overlayCnv.height=cnv.height;
       overlayCnv.style.display='block';
       $('ov').classList.add('gone');
-      $('scan').style.display='block';
-      $('fzb').disabled=false;
-      $('analyzeBtn').disabled=false;
+      $('scanBtn').classList.add('visible');
+      $('scanBtn').disabled=false;
       running=true;
-      if(mode==='live') startAutoAnalysis();
     };
   }catch(e){
-    btn.disabled=false; btn.textContent=T[lang].start;
-    if(e.name==='NotAllowedError'||e.name==='PermissionDeniedError') showErr(T[lang].errD);
-    else if(e.name==='NotFoundError') showErr(T[lang].errN);
+    btn.disabled=false;btn.textContent=T[lang].start;
+    if(e.name==='NotAllowedError'||e.name==='PermissionDeniedError')showErr(T[lang].errD);
+    else if(e.name==='NotFoundError')showErr(T[lang].errN);
     else showErr(T[lang].errG+' ('+e.name+')');
   }
 }
-
 function showErr(m){
   $('ovT').textContent='⚠️';
-  const el=$('ovM'); el.textContent=m; el.classList.add('err');
-  $('sb').disabled=false; $('sb').textContent=T[lang].start;
+  const el=$('ovM');el.textContent=m;el.classList.add('err');
+  $('sb').disabled=false;$('sb').textContent=T[lang].start;
 }
 
-// ── FREEZE ────────────────────────────────────────────────
-function toggleFreeze(){
-  frozen=!frozen;
-  const t=T[lang];
-  $('fzb').classList.toggle('on',frozen);
-  $('fi').textContent=frozen?'▶':'⏸';
-  $('fl').textContent=frozen?t.unfreeze:t.freeze;
-  $('fb').classList.toggle('show',frozen); $('fb').textContent=t.fb;
-  $('scan').style.display=frozen?'none':'block';
-  if(frozen) stopAutoAnalysis();
-  else if(mode==='live') startAutoAnalysis();
-}
-
-// ── MODE TABS ─────────────────────────────────────────────
-function setMode(m){
-  mode=m;
-  ['live','manual','cfg'].forEach(id=>$('tab-'+id).classList.toggle('active',id===m));
-  const isCfg=m==='cfg';
-  $('ctrlBar').style.display=isCfg?'none':'flex';
-  $('resultsSection').style.display=isCfg?'none':'flex';
-  $('histSection').style.display=isCfg?'none':'block';
-  $('cfgSection').style.display=isCfg?'flex':'none';
-  if(m==='live'&&running&&!frozen) startAutoAnalysis();
-  else if(m!=='live') stopAutoAnalysis();
-}
-
-// ── AUTO ANALYSIS ─────────────────────────────────────────
-function startAutoAnalysis(){
-  stopAutoAnalysis();
-  if(autoInterval===0) return;
-  analyzeNow();
-  autoTimer=setInterval(analyzeNow,autoInterval);
-}
-function stopAutoAnalysis(){
-  if(autoTimer){clearInterval(autoTimer);autoTimer=null}
-}
-function setIntervalVal(){
-  autoInterval=parseInt($('intervalSel').value);
-  if(running&&mode==='live'&&!frozen) startAutoAnalysis();
-}
-function setDetail(){
-  detailLevel=$('detailSel').value;
-}
-
-// ── CAPTURE FRAME ─────────────────────────────────────────
 function captureFrame(){
   ctx2d.drawImage(vid,0,0,cnv.width,cnv.height);
   const scale=Math.min(1,640/cnv.width);
   const w=Math.round(cnv.width*scale),h=Math.round(cnv.height*scale);
   const tmp=document.createElement('canvas');
-  tmp.width=w; tmp.height=h;
+  tmp.width=w;tmp.height=h;
   tmp.getContext('2d').drawImage(cnv,0,0,w,h);
-  return tmp.toDataURL('image/jpeg',0.82).split(',')[1];
+  return tmp.toDataURL('image/jpeg',.82).split(',')[1];
 }
 
-// ── AI ANALYSIS ───────────────────────────────────────────
 async function analyzeNow(){
-  if(!running||analyzing) return;
+  if(!running||analyzing)return;
   if(!apiKey){showApiPanel();return}
   analyzing=true;
-  $('analyzeBtn').disabled=true;
+  const btn=$('scanBtn');
+  btn.disabled=true;btn.classList.add('loading');
   $('proc').classList.add('show');
 
-  const langNames={pt:'português do Brasil',en:'English',es:'español',fr:'français',de:'Deutsch',it:'italiano',ja:'日本語',zh:'中文'};
-  const ln=langNames[lang]||'English';
+  const detail=$('detailSel').value;
+  const ln={pt:'português do Brasil',en:'English',es:'español',fr:'français',de:'Deutsch',it:'italiano',ja:'日本語',zh:'中文'}[lang]||'English';
   let prompt='';
-
-  if(detailLevel==='basic'){
-    prompt=`List the main visible objects in this image and their dominant color. Respond ONLY as a JSON array, no markdown, no explanation. Format: [{"object":"name","color":"color name","hex":"#RRGGBB"}]. Respond in ${ln}. Max 6 items.`;
-  } else if(detailLevel==='full'){
-    prompt=`Analyze this image. For each distinct visible object, identify its dominant color. Respond ONLY as a JSON array, no markdown, no explanation. Format: [{"object":"name","color":"color name","hex":"#RRGGBB","rgb":"R,G,B","note":"one sentence description"}]. Respond in ${ln}. Max 8 items.`;
-  } else {
-    prompt=`You are a color assistant for someone with color blindness (daltonism). Analyze this image. For each visible object describe its color in a way helpful for a color-blind person: compare it to common everyday objects (e.g. "similar to ripe banana yellow", "like a clear sky blue", "like dry sand"). Respond ONLY as a JSON array, no markdown. Format: [{"object":"name","color":"color name","hex":"#RRGGBB","note":"accessible color description with everyday comparison"}]. Respond in ${ln}. Max 8 items.`;
+  if(detail==='basic'){
+    prompt=`List the main visible objects in this image and their dominant color. Respond ONLY as a JSON array, no markdown. Format: [{"object":"name","color":"color name","hex":"#RRGGBB"}]. Respond in ${ln}. Max 6 items.`;
+  }else if(detail==='full'){
+    prompt=`Analyze this image. For each distinct visible object identify its dominant color. Respond ONLY as a JSON array, no markdown. Format: [{"object":"name","color":"color name","hex":"#RRGGBB","rgb":"R,G,B","note":"brief description"}]. Respond in ${ln}. Max 8 items.`;
+  }else{
+    prompt=`You are a color assistant for someone with color blindness. Analyze this image. For each visible object describe its color in a way helpful for a color-blind person: compare to common everyday objects (e.g. "like ripe banana yellow", "like clear sky blue", "like dry sand beige"). Respond ONLY as a JSON array, no markdown. Format: [{"object":"name","color":"color name","hex":"#RRGGBB","note":"accessible description with everyday comparison"}]. Respond in ${ln}. Max 8 items.`;
   }
 
   try{
@@ -484,142 +379,105 @@ async function analyzeNow(){
       body:JSON.stringify({
         model:'meta-llama/llama-4-scout-17b-16e-instruct',
         max_tokens:1000,
-        messages:[{
-          role:'user',
-          content:[
-            {type:'image_url',image_url:{url:'data:image/jpeg;base64,'+imageData}},
-            {type:'text',text:prompt}
-          ]
-        }]
+        messages:[{role:'user',content:[
+          {type:'image_url',image_url:{url:'data:image/jpeg;base64,'+imageData}},
+          {type:'text',text:prompt}
+        ]}]
       })
     });
-
     if(res.status===401){
-      apiKey=''; localStorage.removeItem('cv_apikey');
-      showApiPanel(); throw new Error('Invalid API key');
+      apiKey='';localStorage.removeItem('cv_apikey');
+      showApiPanel();throw new Error('Invalid API key');
     }
-    if(!res.ok) throw new Error('HTTP '+res.status);
-
+    if(!res.ok)throw new Error('HTTP '+res.status);
     const data=await res.json();
     const text=data.choices?.[0]?.message?.content||'';
-    const clean=text.replace(/```json|```/g,'').trim();
-
-    // Find JSON array in response
-    const match=clean.match(/\[[\s\S]*\]/);
-    if(!match) throw new Error('No JSON array in response');
-
+    const match=text.replace(/```json|```/g,'').trim().match(/\[[\s\S]*\]/);
+    if(!match)throw new Error('No JSON in response');
     const objects=JSON.parse(match[0]);
     lastObjects=objects;
     analysisHistory.unshift({ts:Date.now(),objects});
-    if(analysisHistory.length>20) analysisHistory.pop();
+    if(analysisHistory.length>20)analysisHistory.pop();
     renderObjects(objects);
     drawOverlay(objects);
     renderHist();
   }catch(e){
     if(!e.message.includes('Invalid API key')){
       console.error('AI error:',e);
-      // Show error briefly in results
-      $('objectsGrid').innerHTML=`<div class="empty-state" style="color:#ff6b6b">⚠️ ${e.message}</div>`;
+      $('objectsGrid').innerHTML=`<div class="empty-state" style="color:#ff6b6b">⚠️ ${esc(e.message)}</div>`;
     }
   }finally{
     analyzing=false;
-    $('analyzeBtn').disabled=false;
+    btn.disabled=false;btn.classList.remove('loading');
     $('proc').classList.remove('show');
   }
 }
 
-// ── RENDER OBJECTS ────────────────────────────────────────
 function renderObjects(objects){
   const grid=$('objectsGrid');
   if(!objects||!objects.length){
-    grid.innerHTML=`<div class="empty-state"><div class="es-icon">🎨</div><span>${T[lang].empty}</span></div>`;
-    return;
+    grid.innerHTML=`<div class="empty-state"><div class="ei">🎨</div><span>${T[lang].empty}</span></div>`;return;
   }
   grid.innerHTML=objects.map(obj=>{
-    const hex=obj.hex||'#888888';
-    const [r,g,b]=hexToRgb(hex);
+    const hex=obj.hex||'#888';
+    const[r,g,b]=hexToRgb(hex);
     const rgb=obj.rgb||`${r},${g},${b}`;
-    return `
-      <div class="obj-row">
-        <div class="obj-swatch" style="background:${esc(hex)}"></div>
-        <div class="obj-info">
-          <div class="obj-label">${esc(obj.object||'')}</div>
-          <div class="obj-color" style="color:${esc(hex)}">${esc(obj.color||'')}</div>
-          <div class="obj-badges">
-            <span class="obj-badge hex">${esc(hex.toUpperCase())}</span>
-            <span class="obj-badge">RGB ${esc(rgb)}</span>
-          </div>
-          ${obj.note?`<div class="obj-note">${esc(obj.note)}</div>`:''}
+    return`<div class="obj-row">
+      <div class="obj-swatch" style="background:${esc(hex)}"></div>
+      <div class="obj-info">
+        <div class="obj-label">${esc(obj.object||'')}</div>
+        <div class="obj-color" style="color:${esc(hex)}">${esc(obj.color||'')}</div>
+        <div class="obj-badges">
+          <span class="badge hex">${esc(hex.toUpperCase())}</span>
+          <span class="badge">RGB ${esc(rgb)}</span>
         </div>
-      </div>`;
+        ${obj.note?`<div class="obj-note">${esc(obj.note)}</div>`:''}
+      </div>
+    </div>`;
   }).join('');
 }
 
-// ── OVERLAY ───────────────────────────────────────────────
 function drawOverlay(objects){
   overlayCtx.clearRect(0,0,overlayCnv.width,overlayCnv.height);
-  if(!objects||!objects.length) return;
-  const W=overlayCnv.width, H=overlayCnv.height;
+  if(!objects||!objects.length)return;
+  const W=overlayCnv.width,H=overlayCnv.height;
   const n=Math.min(objects.length,8);
-  const cols=Math.min(n,4), rows=Math.ceil(n/cols);
-  const cellW=W/cols, cellH=H/rows;
-
+  const cols=Math.min(n,4),rows=Math.ceil(n/cols);
+  const cellW=W/cols,cellH=H/rows;
   objects.slice(0,n).forEach((obj,i)=>{
-    const col=i%cols, row=Math.floor(i/cols);
-    const cx=cellW*col+cellW/2, cy=cellH*row+cellH/2;
+    const col=i%cols,row=Math.floor(i/cols);
+    const cx=cellW*col+cellW/2,cy=cellH*row+cellH/2;
     const hex=obj.hex||'#888888';
-
-    // Glow circle
-    const grad=overlayCtx.createRadialGradient(cx,cy,0,cx,cy,28);
-    grad.addColorStop(0,'rgba(0,0,0,0.55)');
+    const grad=overlayCtx.createRadialGradient(cx,cy,0,cx,cy,32);
+    grad.addColorStop(0,'rgba(0,0,0,0.6)');
     grad.addColorStop(1,'rgba(0,0,0,0)');
     overlayCtx.fillStyle=grad;
-    overlayCtx.beginPath();
-    overlayCtx.arc(cx,cy,28,0,Math.PI*2);
-    overlayCtx.fill();
-
-    // Color dot
-    overlayCtx.beginPath();
-    overlayCtx.arc(cx,cy,18,0,Math.PI*2);
-    overlayCtx.fillStyle=hex;
-    overlayCtx.fill();
-    overlayCtx.lineWidth=2.5;
-    overlayCtx.strokeStyle='rgba(255,255,255,0.8)';
-    overlayCtx.stroke();
-
-    // Label
-    const label=(obj.object||'').slice(0,16);
-    overlayCtx.font='bold 12px Syne,sans-serif';
+    overlayCtx.beginPath();overlayCtx.arc(cx,cy,32,0,Math.PI*2);overlayCtx.fill();
+    overlayCtx.beginPath();overlayCtx.arc(cx,cy,20,0,Math.PI*2);
+    overlayCtx.fillStyle=hex;overlayCtx.fill();
+    overlayCtx.lineWidth=2.5;overlayCtx.strokeStyle='rgba(255,255,255,0.85)';overlayCtx.stroke();
+    const label=(obj.object||'').slice(0,18);
+    overlayCtx.font='bold 12px Syne,system-ui,sans-serif';
     const tw=overlayCtx.measureText(label).width;
-    const lx=cx-tw/2-8, ly=cy+22;
-    overlayCtx.fillStyle='rgba(8,8,8,0.78)';
-    if(overlayCtx.roundRect){
-      overlayCtx.beginPath();
-      overlayCtx.roundRect(lx,ly,tw+16,20,5);
-      overlayCtx.fill();
-    }else{
-      overlayCtx.fillRect(lx,ly,tw+16,20);
-    }
+    const lx=cx-tw/2-8,ly=cy+24;
+    overlayCtx.fillStyle='rgba(8,8,8,0.82)';
+    if(overlayCtx.roundRect){overlayCtx.beginPath();overlayCtx.roundRect(lx,ly,tw+16,22,5);overlayCtx.fill();}
+    else overlayCtx.fillRect(lx,ly,tw+16,22);
     overlayCtx.fillStyle='#f0f0f0';
-    overlayCtx.fillText(label,cx-tw/2,ly+14);
+    overlayCtx.fillText(label,cx-tw/2,ly+15);
   });
 }
 
-// ── HISTORY ───────────────────────────────────────────────
 function renderHist(){
   const row=$('hr');
   if(!analysisHistory.length){
-    row.innerHTML=`<span style="font-size:.75rem;color:var(--muted)">${T[lang].he}</span>`;
-    return;
+    row.innerHTML=`<span style="font-size:.73rem;color:var(--muted)">${T[lang].he}</span>`;return;
   }
-  row.innerHTML=analysisHistory
-    .flatMap(a=>a.objects)
-    .slice(0,18)
+  row.innerHTML=analysisHistory.flatMap(a=>a.objects).slice(0,18)
     .map(obj=>`<div class="hchip"><div class="hdot" style="background:${esc(obj.hex||'#888')}"></div>${esc((obj.object||'').slice(0,14))}</div>`)
     .join('');
 }
 
-// ── UTILS ─────────────────────────────────────────────────
 function hexToRgb(hex){
   const h=hex.replace('#','');
   return[parseInt(h.slice(0,2),16)||0,parseInt(h.slice(2,4),16)||0,parseInt(h.slice(4,6),16)||0];
