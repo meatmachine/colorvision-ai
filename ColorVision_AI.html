@@ -197,14 +197,14 @@ canvas{display:none}
 
   <div class="api-panel hidden" id="apiPanel">
     <div style="font-size:2.5rem">🔑</div>
-    <div class="api-title" id="apT">Chave da API Anthropic</div>
-    <div class="api-msg" id="apM">Cole sua chave da API para ativar a identificação por IA.</div>
+    <div class="api-title" id="apT">Chave da API Groq (gratuita)</div>
+    <div class="api-msg" id="apM">Cole sua chave do Groq para ativar a IA. É gratuita em console.groq.com</div>
     <div class="api-input-wrap">
-      <input type="password" id="apiKeyInput" class="api-input" placeholder="sk-ant-..." autocomplete="off">
+      <input type="password" id="apiKeyInput" class="api-input" placeholder="gsk_..." autocomplete="off">
       <button class="toggle-key" onclick="toggleKeyVis()">👁</button>
     </div>
     <button class="btn-api" onclick="saveApiKey()" id="apBtn">Salvar e continuar</button>
-    <div class="api-note" id="apN">A chave é salva localmente no dispositivo (localStorage). Nunca enviada a servidores além da Anthropic.</div>
+    <div class="api-note" id="apN">Obtenha grátis em console.groq.com → API Keys. A chave é salva localmente no dispositivo (localStorage).</div>
   </div>
 </div>
 
@@ -270,8 +270,8 @@ canvas{display:none}
 <script>
 // ── TRANSLATIONS ──────────────────────────────────────────
 const T = {
-  pt:{f:'🇧🇷',c:'PT',start:'▶ Ativar câmera',ovT:'ColorVision AI',ovM:'IA identifica múltiplos objetos e suas cores simultaneamente na cena.',errD:'Permissão negada. Vá em Configurações > Chrome > Permissões.',errN:'Nenhuma câmera encontrada.',errG:'Erro de câmera. Use HTTPS.',apT:'Chave da API Anthropic',apM:'Cole sua chave da API para ativar a identificação por IA.',apBtn:'Salvar e continuar',apN:'A chave é salva localmente no dispositivo (localStorage). Nunca enviada a servidores além da Anthropic.',freeze:'Pausar',unfreeze:'Retomar',fb:'⏸ PAUSADO',analyze:'Analisar cena',analyzing:'Analisando…',resLabel:'OBJETOS DETECTADOS',histLabel:'HISTÓRICO',empty:'Aponte a câmera e toque em Analisar',he:'Nenhuma análise ainda',proc:'Analisando com IA…',tabLive:'⚡ Ao vivo',tabManual:'📸 Manual',tabCfg:'⚙️ Config',cfgApiLbl:'Chave da API',cfgApiOk:'✓ Configurada',cfgApiNo:'Não configurada',cfgApiBtn:'Configurar',cfgAutoLbl:'Análise automática',cfgDetLbl:'Nível de detalhe',cfgNote:'O modo Acessibilidade descreve cores para daltônicos usando comparações cotidianas.'},
-  en:{f:'🇺🇸',c:'EN',start:'▶ Start Camera',ovT:'ColorVision AI',ovM:'AI identifies multiple objects and their colors simultaneously in the scene.',errD:'Permission denied. Go to Settings > Chrome > Permissions.',errN:'No camera found.',errG:'Camera error. Use HTTPS.',apT:'Anthropic API Key',apM:'Paste your API key to enable AI color detection.',apBtn:'Save & continue',apN:'Your key is saved locally on your device only. Never sent to any server other than Anthropic.',freeze:'Freeze',unfreeze:'Resume',fb:'⏸ FROZEN',analyze:'Analyze scene',analyzing:'Analyzing…',resLabel:'DETECTED OBJECTS',histLabel:'HISTORY',empty:'Point the camera and tap Analyze',he:'No analysis yet',proc:'Analyzing with AI…',tabLive:'⚡ Live',tabManual:'📸 Manual',tabCfg:'⚙️ Config',cfgApiLbl:'API Key',cfgApiOk:'✓ Configured',cfgApiNo:'Not configured',cfgApiBtn:'Configure',cfgAutoLbl:'Auto-analysis',cfgDetLbl:'Detail level',cfgNote:'Accessibility mode describes colors for color-blind users with everyday comparisons.'},
+  pt:{f:'🇧🇷',c:'PT',start:'▶ Ativar câmera',ovT:'ColorVision AI',ovM:'IA identifica múltiplos objetos e suas cores simultaneamente na cena.',errD:'Permissão negada. Vá em Configurações > Chrome > Permissões.',errN:'Nenhuma câmera encontrada.',errG:'Erro de câmera. Use HTTPS.',apT:'Chave da API Groq (gratuita)',apM:'Cole sua chave do Groq. Obtenha grátis em console.groq.com → API Keys.',apBtn:'Salvar e continuar',apN:'A chave é salva localmente no dispositivo (localStorage). Gratuita em console.groq.com',freeze:'Pausar',unfreeze:'Retomar',fb:'⏸ PAUSADO',analyze:'Analisar cena',analyzing:'Analisando…',resLabel:'OBJETOS DETECTADOS',histLabel:'HISTÓRICO',empty:'Aponte a câmera e toque em Analisar',he:'Nenhuma análise ainda',proc:'Analisando com IA…',tabLive:'⚡ Ao vivo',tabManual:'📸 Manual',tabCfg:'⚙️ Config',cfgApiLbl:'Chave Groq',cfgApiOk:'✓ Configurada',cfgApiNo:'Não configurada',cfgApiBtn:'Configurar',cfgAutoLbl:'Análise automática',cfgDetLbl:'Nível de detalhe',cfgNote:'O modo Acessibilidade descreve cores para daltônicos usando comparações cotidianas.'},
+  en:{f:'🇺🇸',c:'EN',start:'▶ Start Camera',ovT:'ColorVision AI',ovM:'AI identifies multiple objects and their colors simultaneously in the scene.',errD:'Permission denied. Go to Settings > Chrome > Permissions.',errN:'No camera found.',errG:'Camera error. Use HTTPS.',apT:'Groq API Key (free)',apM:'Paste your Groq key. Get it free at console.groq.com → API Keys.',apBtn:'Save & continue',apN:'Your key is saved locally on your device. Free at console.groq.com',freeze:'Freeze',unfreeze:'Resume',fb:'⏸ FROZEN',analyze:'Analyze scene',analyzing:'Analyzing…',resLabel:'DETECTED OBJECTS',histLabel:'HISTORY',empty:'Point the camera and tap Analyze',he:'No analysis yet',proc:'Analyzing with AI…',tabLive:'⚡ Live',tabManual:'📸 Manual',tabCfg:'⚙️ Config',cfgApiLbl:'Groq Key',cfgApiOk:'✓ Configured',cfgApiNo:'Not configured',cfgApiBtn:'Configure',cfgAutoLbl:'Auto-analysis',cfgDetLbl:'Detail level',cfgNote:'Accessibility mode describes colors for color-blind users with everyday comparisons.'},
   es:{f:'🇪🇸',c:'ES',start:'▶ Activar cámara',ovT:'ColorVision AI',ovM:'IA identifica múltiples objetos y sus colores simultáneamente.',errD:'Permiso denegado. Configuración > Chrome > Permisos.',errN:'No se encontró cámara.',errG:'Error de cámara. Usa HTTPS.',apT:'Clave API Anthropic',apM:'Pega tu clave API para activar la IA.',apBtn:'Guardar y continuar',apN:'La clave se guarda localmente en tu dispositivo.',freeze:'Pausar',unfreeze:'Reanudar',fb:'⏸ PAUSADO',analyze:'Analizar escena',analyzing:'Analizando…',resLabel:'OBJETOS DETECTADOS',histLabel:'HISTORIAL',empty:'Apunta la cámara y toca Analizar',he:'Sin análisis aún',proc:'Analizando con IA…',tabLive:'⚡ En vivo',tabManual:'📸 Manual',tabCfg:'⚙️ Config',cfgApiLbl:'Clave API',cfgApiOk:'✓ Configurada',cfgApiNo:'No configurada',cfgApiBtn:'Configurar',cfgAutoLbl:'Análisis automático',cfgDetLbl:'Nivel de detalle',cfgNote:'El modo Accesibilidad describe colores para daltónicos.'},
   fr:{f:'🇫🇷',c:'FR',start:'▶ Activer caméra',ovT:'ColorVision AI',ovM:"L'IA identifie plusieurs objets et leurs couleurs simultanément.",errD:'Permission refusée. Paramètres > Chrome > Autorisations.',errN:'Aucune caméra trouvée.',errG:'Erreur caméra. Utilisez HTTPS.',apT:'Clé API Anthropic',apM:"Collez votre clé API pour activer l'IA.",apBtn:'Enregistrer et continuer',apN:'La clé est sauvegardée localement.',freeze:'Geler',unfreeze:'Reprendre',fb:'⏸ GELÉ',analyze:'Analyser la scène',analyzing:'Analyse…',resLabel:'OBJETS DÉTECTÉS',histLabel:'HISTORIQUE',empty:'Pointez la caméra et appuyez sur Analyser',he:'Aucune analyse',proc:'Analyse en cours…',tabLive:'⚡ Direct',tabManual:'📸 Manuel',tabCfg:'⚙️ Config',cfgApiLbl:'Clé API',cfgApiOk:'✓ Configurée',cfgApiNo:'Non configurée',cfgApiBtn:'Configurer',cfgAutoLbl:'Analyse auto',cfgDetLbl:'Niveau de détail',cfgNote:"Le mode Accessibilité décrit les couleurs pour les daltoniens."},
   de:{f:'🇩🇪',c:'DE',start:'▶ Kamera starten',ovT:'ColorVision AI',ovM:'KI erkennt mehrere Objekte und Farben gleichzeitig.',errD:'Zugriff verweigert. Einstellungen > Chrome > Berechtigungen.',errN:'Keine Kamera gefunden.',errG:'Kamerafehler. Bitte HTTPS verwenden.',apT:'Anthropic API-Schlüssel',apM:'API-Schlüssel eingeben, um KI zu aktivieren.',apBtn:'Speichern & fortfahren',apN:'Schlüssel wird nur lokal gespeichert.',freeze:'Einfrieren',unfreeze:'Fortsetzen',fb:'⏸ EINGEFROREN',analyze:'Szene analysieren',analyzing:'Analysiere…',resLabel:'ERKANNTE OBJEKTE',histLabel:'VERLAUF',empty:'Kamera richten und Analysieren tippen',he:'Noch keine Analyse',proc:'KI analysiert…',tabLive:'⚡ Live',tabManual:'📸 Manuell',tabCfg:'⚙️ Config',cfgApiLbl:'API-Schlüssel',cfgApiOk:'✓ Konfiguriert',cfgApiNo:'Nicht konfiguriert',cfgApiBtn:'Konfigurieren',cfgAutoLbl:'Auto-Analyse',cfgDetLbl:'Detailgrad',cfgNote:'Barrierefreiheitsmodus beschreibt Farben für Farbenblinde.'},
@@ -478,16 +478,16 @@ async function analyzeNow(){
 
   try{
     const imageData=captureFrame();
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
+        model:'meta-llama/llama-4-scout-17b-16e-instruct',
         max_tokens:1000,
         messages:[{
           role:'user',
           content:[
-            {type:'image',source:{type:'base64',media_type:'image/jpeg',data:imageData}},
+            {type:'image_url',image_url:{url:'data:image/jpeg;base64,'+imageData}},
             {type:'text',text:prompt}
           ]
         }]
@@ -501,7 +501,7 @@ async function analyzeNow(){
     if(!res.ok) throw new Error('HTTP '+res.status);
 
     const data=await res.json();
-    const text=(data.content||[]).map(b=>b.text||'').join('');
+    const text=data.choices?.[0]?.message?.content||'';
     const clean=text.replace(/```json|```/g,'').trim();
 
     // Find JSON array in response
