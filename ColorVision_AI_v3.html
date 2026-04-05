@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#080810">
+<title>ColorVision AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#080810;--panel:#0f0f1a;--border:rgba(255,255,255,.07);
+  --accent:#b8ff57;--accent2:#57c8ff;--text:#f0f0f8;
+  --muted:rgba(240,240,248,.38);--card:rgba(255,255,255,.04);--radius:16px
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Syne',system-ui,sans-serif}
+body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative}
+
+/* HTTPS WARN */
+#httpsWarn{display:none;position:fixed;inset:0;background:var(--bg);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:36px;text-align:center}
+#httpsWarn.show{display:flex}
+.w-icon{font-size:3.5rem}
+.w-title{font-size:1.4rem;font-weight:800;color:var(--accent)}
+.w-msg{font-size:.88rem;line-height:1.75;color:var(--muted);max-width:300px}
+.w-box{background:rgba(184,255,87,.06);border:1px solid rgba(184,255,87,.25);border-radius:var(--radius);padding:18px 20px;font-family:'Space Mono',monospace;font-size:.78rem;line-height:2;color:var(--accent);text-align:left;width:100%;max-width:340px}
+.w-box b{color:#fff}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0;z-index:40;position:relative}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:34px;height:34px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 18px rgba(184,255,87,.35)}
+.logo-text{font-size:1.1rem;font-weight:800;letter-spacing:-.04em}
+.logo-text em{color:var(--accent);font-style:normal}
+.logo-sub{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:1px}
+.api-status{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:7px 12px;cursor:pointer;transition:all .2s}
+.api-status:hover{border-color:rgba(184,255,87,.3)}
+.api-dot{width:7px;height:7px;border-radius:50%;background:#ff5757;flex-shrink:0;transition:background .3s}
+.api-dot.ok{background:var(--accent);box-shadow:0 0 6px rgba(184,255,87,.6)}
+.api-label{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted)}
+
+/* API MODAL */
+#apiModal{display:none;position:fixed;inset:0;background:rgba(8,8,16,.9);z-index:200;align-items:flex-end;justify-content:center}
+#apiModal.open{display:flex}
+.modal-sheet{background:var(--panel);border:1px solid var(--border);border-bottom:none;border-radius:24px 24px 0 0;padding:28px 24px 36px;width:100%;max-width:480px}
+.modal-title{font-size:1.1rem;font-weight:800;margin-bottom:6px}
+.modal-desc{font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:18px}
+.modal-desc a{color:var(--accent2);text-decoration:none}
+.modal-input{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--text);font-family:'Space Mono',monospace;font-size:.82rem;outline:none;transition:border-color .2s;margin-bottom:14px}
+.modal-input:focus{border-color:rgba(184,255,87,.4)}
+.modal-input::placeholder{color:var(--muted)}
+.modal-btn{width:100%;background:var(--accent);color:#080810;border:none;border-radius:50px;padding:14px;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;transition:opacity .2s}
+.modal-btn:hover{opacity:.88}
+.modal-note{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--muted);margin-top:12px;text-align:center;line-height:1.5}
+
+/* LANGUAGE */
+.lang-wrap{position:relative}
+.lang-btn{background:var(--card);border:1px solid var(--border);border-radius:50px;padding:8px 13px;color:var(--text);font-size:.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace}
+.lang-dd{position:absolute;top:calc(100% + 8px);right:0;background:#151520;border:1px solid var(--border);border-radius:14px;overflow:hidden;min-width:160px;z-index:100;display:none;box-shadow:0 20px 50px rgba(0,0,0,.7)}
+.lang-dd.open{display:block}
+.lang-opt{padding:11px 14px;cursor:pointer;font-size:.83rem;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--border);transition:background .15s}
+.lang-opt:last-child{border-bottom:none}
+.lang-opt:hover{background:rgba(255,255,255,.04)}
+.lang-opt.active{color:var(--accent)}
+
+/* CAMERA */
+.cam{flex:1;position:relative;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:0}
+video{width:100%;height:100%;object-fit:cover;display:block}
+#drawCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:10}
+#captureCanvas{display:none}
+
+/* START OVERLAY */
+.ov{position:absolute;inset:0;background:rgba(8,8,16,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:36px;text-align:center;z-index:20}
+.ov.gone{display:none}
+.ov-icon{font-size:4rem;filter:drop-shadow(0 0 20px rgba(184,255,87,.3))}
+.ov-title{font-size:1.3rem;font-weight:800;letter-spacing:-.04em}
+.ov-msg{font-size:.85rem;line-height:1.7;color:var(--muted);max-width:280px}
+.ov-msg.err{color:#ff7070}
+.btn-start{margin-top:4px;background:var(--accent);color:#080810;border:none;border-radius:50px;padding:16px 38px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 0 24px rgba(184,255,87,.3);transition:opacity .2s,box-shadow .2s}
+.btn-start:active{opacity:.8}
+.btn-start:disabled{opacity:.35;cursor:default;box-shadow:none}
+
+/* SCAN BADGE */
+.scan-badge{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(8,8,16,.75);border:1px solid rgba(184,255,87,.4);border-radius:50px;padding:5px 14px;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;display:none;z-index:15;backdrop-filter:blur(8px);white-space:nowrap}
+.scan-badge.show{display:block}
+.scan-badge.analyzing{border-color:rgba(87,200,255,.5);color:var(--accent2);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* PANEL */
+.panel{background:var(--panel);border-top:1px solid var(--border);padding:14px 16px 20px;display:flex;flex-direction:column;gap:12px;flex-shrink:0}
+.scan-row{display:flex;align-items:center;gap:12px}
+.btn-scan{flex:1;background:var(--accent);color:#080810;border:none;border-radius:50px;padding:14px 20px;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 0 20px rgba(184,255,87,.2);transition:all .2s}
+.btn-scan:active{transform:scale(.97);opacity:.85}
+.btn-scan:disabled{opacity:.35;cursor:default;box-shadow:none}
+.btn-scan.loading{background:#1a2a0a;color:var(--accent);border:1px solid rgba(184,255,87,.3);box-shadow:none}
+.btn-clear{background:var(--card);color:var(--muted);border:1px solid var(--border);border-radius:50px;padding:14px 18px;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-clear:hover{color:var(--text);border-color:rgba(255,255,255,.18)}
+.btn-clear:disabled{opacity:.3;cursor:default}
+.result-strip{min-height:52px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:10px;overflow:hidden}
+.result-idle{font-family:'Space Mono',monospace;font-size:.73rem;color:var(--muted)}
+.result-chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;flex:1}
+.result-chips::-webkit-scrollbar{display:none}
+.rchip{flex-shrink:0;display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:5px 12px 5px 7px;font-size:.75rem;color:var(--muted);white-space:nowrap}
+.rchip-dot{width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div id="httpsWarn">
+  <div class="w-icon">⚠️</div>
+  <div class="w-title">HTTPS Necessário</div>
+  <div class="w-msg">A câmera só funciona em páginas seguras (HTTPS).</div>
+  <div class="w-box">
+    <b>1.</b> Acesse <b style="color:var(--accent)">netlify.com/drop</b><br>
+    <b>2.</b> Arraste este arquivo HTML<br>
+    <b>3.</b> Abra o link gerado no Chrome<br>
+    <b>4.</b> Permita o acesso à câmera ✓
+  </div>
+</div>
+
+<div id="apiModal">
+  <div class="modal-sheet">
+    <div class="modal-title">🔑 Chave da API Groq</div>
+    <div class="modal-desc">Crie gratuitamente em <a href="https://console.groq.com" target="_blank">console.groq.com</a></div>
+    <input class="modal-input" id="apiInput" type="password" placeholder="gsk_..." autocomplete="off" spellcheck="false">
+    <button class="modal-btn" onclick="saveApiKey()">Salvar e continuar</button>
+    <div class="modal-note">Salva localmente no dispositivo. Nunca enviada a terceiros.</div>
+  </div>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">👁</div>
+    <div>
+      <div class="logo-text">Color<em>Vision</em> <span style="font-size:.65rem;color:var(--muted);font-weight:400">AI</span></div>
+      <div class="logo-sub">Vision por Groq</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div class="api-status" onclick="openApiModal()">
+      <div class="api-dot" id="apiDot"></div>
+      <span class="api-label" id="apiLabel">API</span>
+    </div>
+    <div class="lang-wrap">
+      <button class="lang-btn" onclick="toggleDD()">
+        <span id="lf">🇧🇷</span><span id="lc">PT</span>
+      </button>
+      <div class="lang-dd" id="dd">
+        <div class="lang-opt active" onclick="setLang('pt')">🇧🇷 &nbsp;Português</div>
+        <div class="lang-opt" onclick="setLang('en')">🇺🇸 &nbsp;English</div>
+        <div class="lang-opt" onclick="setLang('es')">🇪🇸 &nbsp;Español</div>
+        <div class="lang-opt" onclick="setLang('fr')">🇫🇷 &nbsp;Français</div>
+        <div class="lang-opt" onclick="setLang('de')">🇩🇪 &nbsp;Deutsch</div>
+        <div class="lang-opt" onclick="setLang('it')">🇮🇹 &nbsp;Italiano</div>
+        <div class="lang-opt" onclick="setLang('ja')">🇯🇵 &nbsp;日本語</div>
+        <div class="lang-opt" onclick="setLang('zh')">🇨🇳 &nbsp;中文</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="cam">
+  <video id="vid" autoplay playsinline muted></video>
+  <canvas id="captureCanvas"></canvas>
+  <canvas id="drawCanvas"></canvas>
+  <div class="scan-badge" id="scanBadge">Pronto</div>
+  <div class="ov" id="ov">
+    <div class="ov-icon">📷</div>
+    <div class="ov-title" id="ovT">Pronto para começar</div>
+    <div class="ov-msg" id="ovM">Toque no botão para ativar a câmera.</div>
+    <button class="btn-start" id="sb" onclick="startCam()">▶ Ativar câmera</button>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="scan-row">
+    <button class="btn-scan" id="scanBtn" onclick="doScan()" disabled>
+      <span id="scanIcon">🔍</span><span id="scanLabel">Escanear cores</span>
+    </button>
+    <button class="btn-clear" id="clearBtn" onclick="clearOverlay()" disabled>Limpar</button>
+  </div>
+  <div class="result-strip">
+    <span class="result-idle" id="resultIdle">Escaneie para detectar cores</span>
+    <div class="result-chips" id="resultChips" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+const T={
+  pt:{f:'🇧🇷',c:'PT',start:'▶ Ativar câmera',ovT:'Pronto para começar',ovM:'Toque no botão para ativar a câmera.',errD:'Permissão negada. Vá em Configurações › Chrome › Permissões.',errN:'Nenhuma câmera encontrada.',errG:'Erro de câmera. Use HTTPS.',scanBtn:'Escanear cores',scanning:'Analisando...',clear:'Limpar',idle:'Escaneie para detectar cores',badge_ready:'Pronto',badge_analyzing:'Analisando...',badge_done:'Concluído'},
+  en:{f:'🇺🇸',c:'EN',start:'▶ Start Camera',ovT:'Ready to start',ovM:'Tap the button to activate the camera.',errD:'Permission denied. Go to Settings › Chrome › Permissions.',errN:'No camera found.',errG:'Camera error. Use HTTPS.',scanBtn:'Scan colors',scanning:'Analyzing...',clear:'Clear',idle:'Scan to detect colors',badge_ready:'Ready',badge_analyzing:'Analyzing...',badge_done:'Done'},
+  es:{f:'🇪🇸',c:'ES',start:'▶ Activar cámara',ovT:'Listo',ovM:'Toca el botón para activar la cámara.',errD:'Permiso denegado.',errN:'No se encontró cámara.',errG:'Error. Usa HTTPS.',scanBtn:'Escanear colores',scanning:'Analizando...',clear:'Limpiar',idle:'Escanea para detectar colores',badge_ready:'Listo',badge_analyzing:'Analizando...',badge_done:'Listo'},
+  fr:{f:'🇫🇷',c:'FR',start:'▶ Activer la caméra',ovT:'Prêt',ovM:'Appuyez pour activer la caméra.',errD:'Permission refusée.',errN:'Aucune caméra.',errG:'Erreur. Utilisez HTTPS.',scanBtn:'Scanner les couleurs',scanning:'Analyse...',clear:'Effacer',idle:'Scannez pour détecter',badge_ready:'Prêt',badge_analyzing:'Analyse...',badge_done:'Terminé'},
+  de:{f:'🇩🇪',c:'DE',start:'▶ Kamera starten',ovT:'Bereit',ovM:'Tippe zum Aktivieren.',errD:'Zugriff verweigert.',errN:'Keine Kamera.',errG:'Fehler. HTTPS verwenden.',scanBtn:'Farben scannen',scanning:'Analysiere...',clear:'Löschen',idle:'Scannen zum Erkennen',badge_ready:'Bereit',badge_analyzing:'Analysiere...',badge_done:'Fertig'},
+  it:{f:'🇮🇹',c:'IT',start:'▶ Attiva fotocamera',ovT:'Pronto',ovM:'Tocca per attivare.',errD:'Permesso negato.',errN:'Nessuna fotocamera.',errG:'Errore. Usa HTTPS.',scanBtn:'Scansiona colori',scanning:'Analisi...',clear:'Cancella',idle:'Scansiona per rilevare',badge_ready:'Pronto',badge_analyzing:'Analisi...',badge_done:'Fatto'},
+  ja:{f:'🇯🇵',c:'JP',start:'▶ カメラを起動',ovT:'準備完了',ovM:'タップしてカメラを起動。',errD:'許可拒否。設定でカメラを許可。',errN:'カメラなし。',errG:'エラー。HTTPSを使用。',scanBtn:'色をスキャン',scanning:'分析中...',clear:'クリア',idle:'スキャンして色を検出',badge_ready:'準備完了',badge_analyzing:'分析中...',badge_done:'完了'},
+  zh:{f:'🇨🇳',c:'ZH',start:'▶ 启动摄像头',ovT:'准备开始',ovM:'点击启动摄像头。',errD:'权限被拒绝。',errN:'未找到摄像头。',errG:'错误。请使用HTTPS。',scanBtn:'扫描颜色',scanning:'分析中...',clear:'清除',idle:'扫描以检测颜色',badge_ready:'就绪',badge_analyzing:'分析中...',badge_done:'完成'},
+};
+
+const PROMPTS={
+  pt:`Você é um detector de cores para pessoas daltônicas. Analise a imagem e identifique os objetos visíveis com suas cores predominantes.
+Responda APENAS com JSON válido, sem texto extra, sem markdown, sem blocos de código:
+{"objects":[{"label":"parede","color":"bege claro","hex":"#F5F0DC","x":0.05,"y":0.1,"w":0.6,"h":0.7}]}
+Regras: 3 a 7 objetos distintos. x,y,w,h proporcionais 0.0-1.0 (x/y=canto sup. esq., w/h=largura/altura). "color" em PORTUGUÊS simples. "hex" o código hexadecimal mais representativo da cor.`,
+  en:`You are a color detector for colorblind people. Analyze the image and identify visible objects with their dominant colors.
+Respond ONLY with valid JSON, no extra text, no markdown:
+{"objects":[{"label":"wall","color":"light beige","hex":"#F5F0DC","x":0.05,"y":0.1,"w":0.6,"h":0.7}]}
+Rules: 3 to 7 distinct objects. x,y,w,h proportional 0.0-1.0 (x/y=top-left, w/h=width/height). "color" in clear ENGLISH. "hex" most representative hex code.`,
+  es:`Detector de colores para daltónicos. Solo JSON:
+{"objects":[{"label":"pared","color":"beige claro","hex":"#F5F0DC","x":0.05,"y":0.1,"w":0.6,"h":0.7}]}
+3-7 objetos. x,y,w,h proporcionales 0.0-1.0. "color" en ESPAÑOL. "hex" el más representativo.`,
+  fr:`Détecteur de couleurs pour daltoniens. JSON uniquement:
+{"objects":[{"label":"mur","color":"beige clair","hex":"#F5F0DC","x":0.05,"y":0.1,"w":0.6,"h":0.7}]}
+3-7 objets. x,y,w,h proportionnels 0.0-1.0. "color" en FRANÇAIS. "hex" le plus représentatif.`,
+  de:`Farberkenner für Farbenblinde. Nur JSON:
+{"objects":[{"label":"Wand","color":"helles Beige","hex":"#F5F0DC","x":0.05,"y":0.1,"w":0.6,"h":0.7}]}
+3-7 Objekte. x,y,w,h proportional 0.0-1.0. "color" auf DEUTSCH. "hex" repräsentativster Code.`,
+  it:`Rilevatore di colori per daltonici. Solo JSON:
+{"objects":[{"label":"parete","color":"beige chiaro","hex":"#F5F0DC","x":0.05,"y":0.1,"w":0.6,"h":0.7}]}
+3-7 oggetti. x,y,w,h proporzionali 0.0-1.0. "color" in ITALIANO. "hex" il più rappresentativo.`,
+  ja:`色覚障害者向けの色検出器。JSONのみ:
+{"objects":[{"label":"壁","color":"明るいベージュ","hex":"#F5F0DC","x":0.05,"y":0.1,"w":0.6,"h":0.7}]}
+3〜7個。x,y,w,h比率0.0-1.0。"color"は日本語。"hex"最も代表的なコード。`,
+  zh:`色盲颜色检测器。仅JSON:
+{"objects":[{"label":"墙","color":"浅米色","hex":"#F5F0DC","x":0.05,"y":0.1,"w":0.6,"h":0.7}]}
+3-7个物体。x,y,w,h比例0.0-1.0。"color"中文。"hex"最代表性颜色。`,
+};
+
+let lang='pt', running=false, scanning=false, lastObjects=[];
+const $=id=>document.getElementById(id);
+const vid=$('vid');
+const capCnv=$('captureCanvas');
+const capCtx=capCnv.getContext('2d');
+const drawCnv=$('drawCanvas');
+const drawCtx=drawCnv.getContext('2d');
+
+window.addEventListener('load',()=>{
+  if(location.protocol!=='https:'&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1'){
+    $('httpsWarn').classList.add('show');
+  }
+  updateApiStatus();
+});
+
+function getApiKey(){return localStorage.getItem('cv_apikey')||'';}
+function saveApiKey(){
+  const v=$('apiInput').value.trim();
+  if(!v){alert('Digite a chave API');return;}
+  localStorage.setItem('cv_apikey',v);
+  $('apiModal').classList.remove('open');
+  updateApiStatus();
+}
+function openApiModal(){$('apiInput').value=getApiKey();$('apiModal').classList.add('open');}
+$('apiModal').addEventListener('click',e=>{if(e.target===$('apiModal'))$('apiModal').classList.remove('open');});
+$('apiInput').addEventListener('keydown',e=>{if(e.key==='Enter')saveApiKey();});
+function updateApiStatus(){
+  const has=!!getApiKey();
+  $('apiDot').classList.toggle('ok',has);
+  $('apiLabel').textContent=has?'API ✓':'API';
+}
+
+function toggleDD(){$('dd').classList.toggle('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.lang-wrap'))$('dd').classList.remove('open');});
+function setLang(l){
+  lang=l; const t=T[l];
+  $('lf').textContent=t.f; $('lc').textContent=t.c;
+  $('dd').classList.remove('open');
+  document.querySelectorAll('.lang-opt').forEach((o,i)=>o.classList.toggle('active',['pt','en','es','fr','de','it','ja','zh'][i]===l));
+  if(!running){$('ovT').textContent=t.ovT;$('ovM').textContent=t.ovM;$('sb').textContent=t.start;}
+  $('scanLabel').textContent=t.scanBtn;
+  $('clearBtn').textContent=t.clear;
+  $('resultIdle').textContent=t.idle;
+  const badge=$('scanBadge');
+  if(!scanning&&badge.classList.contains('show'))badge.textContent=t.badge_ready;
+}
+
+async function startCam(){
+  const t=T[lang],btn=$('sb');
+  btn.disabled=true; btn.textContent='⏳...';
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    showErr(t.errG); btn.disabled=false; btn.textContent=t.start; return;
+  }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false
+    });
+    vid.srcObject=stream;
+    vid.onloadedmetadata=()=>{
+      vid.play();
+      capCnv.width=vid.videoWidth||1280; capCnv.height=vid.videoHeight||720;
+      $('ov').classList.add('gone');
+      $('scanBtn').disabled=false; $('clearBtn').disabled=false;
+      const badge=$('scanBadge'); badge.textContent=T[lang].badge_ready; badge.classList.add('show');
+      running=true; resizeDrawCanvas();
+      window.addEventListener('resize',resizeDrawCanvas);
+    };
+  }catch(e){
+    btn.disabled=false; btn.textContent=T[lang].start;
+    const t2=T[lang];
+    if(e.name==='NotAllowedError'||e.name==='PermissionDeniedError')showErr(t2.errD);
+    else if(e.name==='NotFoundError')showErr(t2.errN);
+    else showErr(t2.errG+' ('+e.name+')');
+  }
+}
+function showErr(m){
+  $('ovT').textContent='⚠️';
+  const el=$('ovM'); el.textContent=m; el.classList.add('err');
+  $('sb').disabled=false; $('sb').textContent=T[lang].start;
+}
+function resizeDrawCanvas(){
+  const c=drawCnv.parentElement;
+  drawCnv.width=c.offsetWidth; drawCnv.height=c.offsetHeight;
+  if(lastObjects.length) drawOverlay(lastObjects);
+}
+
+async function doScan(){
+  if(scanning) return;
+  const key=getApiKey();
+  if(!key){openApiModal();return;}
+  scanning=true;
+  const t=T[lang],btn=$('scanBtn');
+  btn.disabled=true; btn.classList.add('loading');
+  $('scanIcon').textContent='⏳'; $('scanLabel').textContent=t.scanning;
+  const badge=$('scanBadge'); badge.textContent=t.badge_analyzing; badge.classList.add('analyzing');
+  try{
+    capCtx.drawImage(vid,0,0,capCnv.width,capCnv.height);
+    const b64=capCnv.toDataURL('image/jpeg',0.85).split(',')[1];
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({
+        model:'meta-llama/llama-4-scout-17b-16e-instruct',
+        max_tokens:1024,
+        messages:[{role:'user',content:[
+          {type:'text',text:PROMPTS[lang]||PROMPTS.pt},
+          {type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}}
+        ]}]
+      })
+    });
+    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err?.error?.message||'HTTP '+res.status);}
+    const data=await res.json();
+    const content=data.choices?.[0]?.message?.content||'';
+    const parsed=parseObjects(content);
+    if(parsed&&parsed.length){
+      lastObjects=parsed; drawOverlay(parsed); showChips(parsed);
+      badge.textContent=t.badge_done; badge.classList.remove('analyzing');
+    } else {
+      badge.textContent='⚠ Sem resultado'; badge.classList.remove('analyzing');
+    }
+  }catch(e){
+    console.error(e);
+    badge.textContent='⚠ '+e.message.slice(0,30); badge.classList.remove('analyzing');
+  }finally{
+    scanning=false; btn.disabled=false; btn.classList.remove('loading');
+    $('scanIcon').textContent='🔍'; $('scanLabel').textContent=T[lang].scanBtn;
+  }
+}
+
+function parseObjects(raw){
+  try{
+    let s=raw.replace(/```json|```/g,'').trim();
+    const m=s.match(/\{[\s\S]*\}/);
+    if(!m)return null;
+    const j=JSON.parse(m[0]);
+    return Array.isArray(j.objects)?j.objects:null;
+  }catch(e){return null;}
+}
+
+function drawOverlay(objects){
+  const W=drawCnv.width, H=drawCnv.height;
+  drawCtx.clearRect(0,0,W,H);
+  objects.forEach(obj=>{
+    const x=obj.x*W, y=obj.y*H, w=obj.w*W, h=obj.h*H;
+    const hex=obj.hex||'#ffffff';
+    const rgb=hexToRgb(hex);
+    const bright=(rgb.r*299+rgb.g*587+rgb.b*114)/1000;
+    const textColor=bright>140?'#111':'#fff';
+    const cs=Math.min(w,h)*0.18;
+    drawCtx.save();
+    drawCtx.strokeStyle=hex; drawCtx.lineWidth=2; drawCtx.globalAlpha=0.65;
+    drawCtx.strokeRect(x,y,w,h);
+    drawCtx.lineWidth=3.5; drawCtx.globalAlpha=1;
+    [[x,y,1,1],[x+w,y,-1,1],[x,y+h,1,-1],[x+w,y+h,-1,-1]].forEach(([cx,cy,dx,dy])=>{
+      drawCtx.beginPath();
+      drawCtx.moveTo(cx+dx*cs,cy); drawCtx.lineTo(cx,cy); drawCtx.lineTo(cx,cy+dy*cs);
+      drawCtx.stroke();
+    });
+    const fontSize=Math.max(12,Math.min(16,W*0.034));
+    drawCtx.font='700 '+fontSize+'px Syne,system-ui,sans-serif';
+    const labelText=obj.color||obj.label||'?';
+    const tw=drawCtx.measureText(labelText).width;
+    const pX=11,pY=6,pillW=tw+pX*2+24,pillH=fontSize+pY*2;
+    let lx=x,ly=y-pillH-5;
+    if(ly<2)ly=y+5;
+    if(lx+pillW>W)lx=W-pillW-2;
+    if(lx<0)lx=2;
+    drawCtx.globalAlpha=0.93; drawCtx.fillStyle=hex;
+    roundRect(drawCtx,lx,ly,pillW,pillH,pillH/2); drawCtx.fill();
+    drawCtx.fillStyle=bright>140?'rgba(0,0,0,.28)':'rgba(255,255,255,.28)';
+    drawCtx.beginPath(); drawCtx.arc(lx+pX+6,ly+pillH/2,5,0,Math.PI*2); drawCtx.fill();
+    drawCtx.globalAlpha=1; drawCtx.fillStyle=textColor;
+    drawCtx.fillText(labelText,lx+pX+16,ly+pillH/2+fontSize*0.36);
+    drawCtx.restore();
+  });
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath(); ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+function hexToRgb(h){return{r:parseInt(h.slice(1,3),16)||0,g:parseInt(h.slice(3,5),16)||0,b:parseInt(h.slice(5,7),16)||0};}
+
+function showChips(objects){
+  $('resultIdle').style.display='none';
+  const chips=$('resultChips'); chips.style.display='flex';
+  chips.innerHTML=objects.map(o=>'<div class="rchip"><div class="rchip-dot" style="background:'+( o.hex||'#888')+'"></div>'+(o.color||o.label||'?')+'</div>').join('');
+}
+
+function clearOverlay(){
+  drawCtx.clearRect(0,0,drawCnv.width,drawCnv.height); lastObjects=[];
+  $('resultIdle').style.display='';
+  $('resultChips').style.display='none'; $('resultChips').innerHTML='';
+  const badge=$('scanBadge'); badge.textContent=T[lang].badge_ready; badge.classList.remove('analyzing');
+}
+</script>
+</body>
+</html>

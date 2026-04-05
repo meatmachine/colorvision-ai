@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0a0a">
+<title>ColorVision</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0a;color:#f0f0f0;font-family:system-ui,-apple-system,sans-serif}
+body{display:flex;flex-direction:column}
+
+/* AVISO HTTPS */
+#httpsWarn{display:none;position:fixed;inset:0;background:#0a0a0a;z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:32px;text-align:center}
+#httpsWarn.show{display:flex}
+.warn-icon{font-size:4rem}
+.warn-title{font-size:1.3rem;font-weight:800;color:#e8ff47}
+.warn-msg{font-size:.9rem;line-height:1.7;color:rgba(255,255,255,.6);max-width:320px}
+.warn-box{background:#1a1a1a;border:1px solid rgba(232,255,71,.3);border-radius:16px;padding:16px;font-size:.82rem;line-height:1.8;color:#e8ff47;text-align:left;width:100%;max-width:340px}
+.warn-box b{color:#fff}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#111;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;z-index:40;position:relative}
+.logo{display:flex;align-items:center;gap:9px}
+.logo-icon{width:32px;height:32px;background:#e8ff47;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.logo-text{font-size:1.05rem;font-weight:800;letter-spacing:-.03em}
+.logo-text span{color:#e8ff47}
+
+/* LANG */
+.lang-wrap{position:relative}
+.lang-btn{background:#1e1e1e;border:1px solid rgba(255,255,255,.14);border-radius:50px;padding:8px 13px;color:#f0f0f0;font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
+.lang-dd{position:absolute;top:calc(100% + 8px);right:0;background:#1c1c1c;border:1px solid rgba(255,255,255,.12);border-radius:14px;overflow:hidden;min-width:168px;z-index:100;display:none;box-shadow:0 16px 40px rgba(0,0,0,.65)}
+.lang-dd.open{display:block}
+.lang-opt{padding:12px 15px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;gap:9px;border-bottom:1px solid rgba(255,255,255,.06)}
+.lang-opt:last-child{border-bottom:none}
+.lang-opt.active{color:#e8ff47}
+
+/* CAMERA */
+.cam{flex:1;position:relative;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center}
+video{width:100%;height:100%;object-fit:cover;display:block}
+canvas{display:none}
+
+/* OVERLAY */
+.ov{position:absolute;inset:0;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;text-align:center;z-index:20}
+.ov.gone{display:none}
+.ov-icon{font-size:3.5rem}
+.ov-title{font-size:1.2rem;font-weight:800;letter-spacing:-.03em}
+.ov-msg{font-size:.87rem;line-height:1.65;color:rgba(240,240,240,.5);max-width:300px}
+.ov-msg.err{color:#ff6b6b}
+.btn-start{margin-top:6px;background:#e8ff47;color:#0a0a0a;border:none;border-radius:50px;padding:15px 34px;font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:-.01em}
+.btn-start:active{opacity:.8}
+.btn-start:disabled{opacity:.4}
+
+/* CROSSHAIR */
+.xh{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:10;display:none}
+.xh-ring{width:72px;height:72px;border:2px solid rgba(255,255,255,.88);border-radius:50%;position:relative;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+.xh-ring::before,.xh-ring::after{content:'';position:absolute;background:rgba(255,255,255,.82)}
+.xh-ring::before{width:1.5px;height:100%;left:50%;transform:translateX(-50%)}
+.xh-ring::after{height:1.5px;width:100%;top:50%;transform:translateY(-50%)}
+.xh-dot{width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border:2px solid rgba(0,0,0,.35);transition:background .1s}
+
+/* SCAN */
+.scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#e8ff47,transparent);opacity:.45;animation:sc 2.5s linear infinite;pointer-events:none;z-index:9;display:none}
+@keyframes sc{from{top:0}to{top:100%}}
+
+/* FROZEN */
+.fbadge{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:#e8ff47;color:#0a0a0a;font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:5px 15px;border-radius:50px;z-index:15;display:none}
+.fbadge.show{display:block}
+
+/* PANEL */
+.panel{background:#111;border-top:1px solid rgba(255,255,255,.07);padding:12px 14px 16px;display:flex;flex-direction:column;gap:11px;flex-shrink:0}
+
+/* COLOR CARD */
+.card{background:#1a1a1a;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:14px;display:flex;align-items:center;gap:13px}
+.sw{width:60px;height:60px;border-radius:13px;background:#2a2a2a;flex-shrink:0;border:1px solid rgba(255,255,255,.1);transition:background .1s}
+.cinfo{flex:1;min-width:0}
+.cname{font-size:1.4rem;font-weight:800;letter-spacing:-.04em;line-height:1.1;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:3px 8px;font-family:monospace;font-size:.68rem;color:rgba(240,240,240,.5)}
+.badge.hex{color:#e8ff47;border-color:rgba(232,255,71,.28)}
+
+/* CONTROLS */
+.ctrl{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hint{font-size:.77rem;color:rgba(240,240,240,.4);line-height:1.5}
+.hint b{color:rgba(240,240,240,.8);font-weight:600}
+.btn-fz{background:rgba(232,255,71,.12);border:1px solid rgba(232,255,71,.28);border-radius:50px;padding:11px 18px;color:#e8ff47;font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:all .18s}
+.btn-fz:active{opacity:.8}
+.btn-fz.on{background:#e8ff47;color:#0a0a0a;border-color:#e8ff47}
+.btn-fz:disabled{opacity:.35;cursor:default}
+
+/* HISTORY */
+.hl{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(240,240,240,.3);margin-bottom:7px}
+.hr{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.hr::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:50px;padding:5px 11px 5px 5px;font-size:.73rem;color:rgba(240,240,240,.5)}
+.hdot{width:20px;height:20px;border-radius:50%;border:1px solid rgba(255,255,255,.15);flex-shrink:0}
+.hempty{font-size:.78rem;color:rgba(240,240,240,.3)}
+</style>
+</head>
+<body>
+
+<!-- AVISO SE NÃO FOR HTTPS -->
+<div id="httpsWarn">
+  <div class="warn-icon">⚠️</div>
+  <div class="warn-title">HTTPS Necessário</div>
+  <div class="warn-msg">A câmera só funciona em páginas seguras (HTTPS). Siga os passos abaixo para colocar este arquivo online gratuitamente:</div>
+  <div class="warn-box">
+    <b>Passo 1:</b> Acesse pelo celular:<br>
+    <b style="color:#e8ff47">netlify.com/drop</b><br><br>
+    <b>Passo 2:</b> Arraste este arquivo HTML para a página<br><br>
+    <b>Passo 3:</b> Abra o link gerado no Chrome do Android<br><br>
+    <b>Passo 4:</b> Permita o acesso à câmera ✓
+  </div>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">👁</div>
+    <div class="logo-text">Color<span>Vision</span></div>
+  </div>
+  <div class="lang-wrap">
+    <button class="lang-btn" onclick="toggleDD()">
+      <span id="lf">🇧🇷</span><span id="lc">PT</span><span style="font-size:.6rem;opacity:.5">▼</span>
+    </button>
+    <div class="lang-dd" id="dd">
+      <div class="lang-opt active" onclick="setLang('pt')">🇧🇷 &nbsp;Português</div>
+      <div class="lang-opt" onclick="setLang('en')">🇺🇸 &nbsp;English</div>
+      <div class="lang-opt" onclick="setLang('es')">🇪🇸 &nbsp;Español</div>
+      <div class="lang-opt" onclick="setLang('fr')">🇫🇷 &nbsp;Français</div>
+      <div class="lang-opt" onclick="setLang('de')">🇩🇪 &nbsp;Deutsch</div>
+      <div class="lang-opt" onclick="setLang('it')">🇮🇹 &nbsp;Italiano</div>
+      <div class="lang-opt" onclick="setLang('ja')">🇯🇵 &nbsp;日本語</div>
+      <div class="lang-opt" onclick="setLang('zh')">🇨🇳 &nbsp;中文</div>
+    </div>
+  </div>
+</header>
+
+<div class="cam">
+  <video id="vid" autoplay playsinline muted></video>
+  <canvas id="cnv"></canvas>
+  <div class="xh" id="xh"><div class="xh-ring"><div class="xh-dot" id="dot"></div></div></div>
+  <div class="scan" id="scan"></div>
+  <div class="fbadge" id="fb">⏸ PAUSADO</div>
+  <div class="ov" id="ov">
+    <div class="ov-icon">📷</div>
+    <div class="ov-title" id="ovT">Pronto para começar</div>
+    <div class="ov-msg" id="ovM">Toque no botão para ativar a câmera e detectar cores em tempo real.</div>
+    <button class="btn-start" id="sb" onclick="startCam()">▶ Ativar câmera</button>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="card">
+    <div class="sw" id="sw"></div>
+    <div class="cinfo">
+      <div class="cname" id="cn">—</div>
+      <div class="badges">
+        <span class="badge hex" id="hx">#------</span>
+        <span class="badge" id="rb">R— G— B—</span>
+      </div>
+    </div>
+  </div>
+  <div class="ctrl">
+    <div class="hint"><b id="h1">Toque para pausar</b><br><span id="h2">Congele para inspecionar a cor</span></div>
+    <button class="btn-fz" id="fzb" onclick="toggleFreeze()" disabled>
+      <span id="fi">⏸</span><span id="fl">Pausar</span>
+    </button>
+  </div>
+  <div>
+    <div class="hl" id="hl">HISTÓRICO</div>
+    <div class="hr" id="hr"><span class="hempty" id="he">Nenhuma cor ainda</span></div>
+  </div>
+</div>
+
+<script>
+// ── TRADUÇÕES ────────────────────────────────────────────────
+const T={
+  pt:{f:'🇧🇷',c:'PT',start:'▶ Ativar câmera',ovT:'Pronto para começar',ovM:'Toque no botão para ativar a câmera e detectar cores em tempo real.',errD:'Permissão negada. Vá em Configurações > Chrome > Permissões e permita a câmera.',errN:'Nenhuma câmera encontrada neste dispositivo.',errG:'Erro ao acessar câmera. Certifique-se de usar HTTPS.',h1:'Toque para pausar',h2:'Congele para inspecionar a cor',fz:'Pausar',uf:'Retomar',hl:'HISTÓRICO',he:'Nenhuma cor ainda',fb:'⏸ PAUSADO'},
+  en:{f:'🇺🇸',c:'EN',start:'▶ Start Camera',ovT:'Ready to start',ovM:'Tap the button to activate the camera and detect colors in real time.',errD:'Permission denied. Go to Settings > Chrome > Permissions and allow camera.',errN:'No camera found on this device.',errG:'Camera error. Make sure you are using HTTPS.',h1:'Tap to freeze',h2:'Freeze to inspect the color',fz:'Freeze',uf:'Resume',hl:'HISTORY',he:'No color yet',fb:'⏸ FROZEN'},
+  es:{f:'🇪🇸',c:'ES',start:'▶ Activar cámara',ovT:'Listo para empezar',ovM:'Toca el botón para activar la cámara y detectar colores en tiempo real.',errD:'Permiso denegado. Ve a Configuración > Chrome > Permisos.',errN:'No se encontró cámara.',errG:'Error de cámara. Usa HTTPS.',h1:'Toca para pausar',h2:'Congela para inspeccionar',fz:'Pausar',uf:'Reanudar',hl:'HISTORIAL',he:'Sin color aún',fb:'⏸ PAUSADO'},
+  fr:{f:'🇫🇷',c:'FR',start:'▶ Activer la caméra',ovT:'Prêt à commencer',ovM:'Appuyez sur le bouton pour activer la caméra.',errD:'Permission refusée. Allez dans Paramètres > Chrome > Autorisations.',errN:'Aucune caméra trouvée.',errG:'Erreur caméra. Utilisez HTTPS.',h1:'Touchez pour geler',h2:'Gelez pour inspecter',fz:'Geler',uf:'Reprendre',hl:'HISTORIQUE',he:'Aucune couleur',fb:'⏸ GELÉ'},
+  de:{f:'🇩🇪',c:'DE',start:'▶ Kamera starten',ovT:'Bereit',ovM:'Tippe auf den Button, um die Kamera zu aktivieren.',errD:'Zugriff verweigert. Einstellungen > Chrome > Berechtigungen.',errN:'Keine Kamera gefunden.',errG:'Kamerafehler. Bitte HTTPS verwenden.',h1:'Tippen zum Einfrieren',h2:'Einfrieren zum Prüfen',fz:'Einfrieren',uf:'Fortsetzen',hl:'VERLAUF',he:'Noch keine Farbe',fb:'⏸ EINGEFROREN'},
+  it:{f:'🇮🇹',c:'IT',start:'▶ Attiva fotocamera',ovT:'Pronto',ovM:'Tocca il pulsante per attivare la fotocamera.',errD:'Permesso negato. Vai in Impostazioni > Chrome > Autorizzazioni.',errN:'Nessuna fotocamera trovata.',errG:'Errore fotocamera. Usa HTTPS.',h1:'Tocca per congelare',h2:'Congela per ispezionare',fz:'Congela',uf:'Riprendi',hl:'CRONOLOGIA',he:'Nessun colore',fb:'⏸ CONGELATO'},
+  ja:{f:'🇯🇵',c:'JP',start:'▶ カメラを起動',ovT:'準備完了',ovM:'ボタンをタップしてカメラを起動します。',errD:'許可拒否。設定 > Chrome > 権限でカメラを許可してください。',errN:'カメラが見つかりません。',errG:'カメラエラー。HTTPSをご使用ください。',h1:'タップして一時停止',h2:'止めて色を確認',fz:'一時停止',uf:'再開',hl:'履歴',he:'色がまだありません',fb:'⏸ 一時停止'},
+  zh:{f:'🇨🇳',c:'ZH',start:'▶ 启动摄像头',ovT:'准备开始',ovM:'点击按钮启动摄像头，实时检测颜色。',errD:'权限被拒绝。请在设置 > Chrome > 权限中允许摄像头。',errN:'未找到摄像头。',errG:'摄像头错误。请使用HTTPS。',h1:'点击冻结',h2:'冻结以检查颜色',fz:'冻结',uf:'恢复',hl:'历史',he:'暂无颜色',fb:'⏸ 已冻结'},
+};
+
+// ── BANCO DE CORES ───────────────────────────────────────────
+const C={
+  pt:[{n:'Preto',r:[0,35],g:[0,35],b:[0,35]},{n:'Branco',r:[220,255],g:[220,255],b:[220,255]},{n:'Cinza escuro',r:[36,90],g:[36,90],b:[36,90]},{n:'Cinza',r:[91,160],g:[91,160],b:[91,160]},{n:'Cinza claro',r:[161,219],g:[161,219],b:[161,219]},{n:'Vermelho',r:[180,255],g:[0,70],b:[0,70]},{n:'Vermelho escuro',r:[100,179],g:[0,50],b:[0,50]},{n:'Rosa',r:[220,255],g:[100,190],b:[140,210]},{n:'Rosa choque',r:[210,255],g:[0,90],b:[100,190]},{n:'Laranja',r:[210,255],g:[90,180],b:[0,70]},{n:'Laranja escuro',r:[160,209],g:[50,130],b:[0,50]},{n:'Amarelo',r:[210,255],g:[190,255],b:[0,90]},{n:'Verde limão',r:[90,200],g:[210,255],b:[0,90]},{n:'Verde',r:[0,90],g:[180,255],b:[0,90]},{n:'Verde escuro',r:[0,70],g:[80,179],b:[0,70]},{n:'Verde azulado',r:[0,80],g:[140,220],b:[110,200]},{n:'Ciano',r:[0,80],g:[190,255],b:[190,255]},{n:'Azul claro',r:[90,210],g:[170,245],b:[210,255]},{n:'Azul',r:[0,80],g:[70,160],b:[190,255]},{n:'Azul escuro',r:[0,60],g:[0,90],b:[120,210]},{n:'Azul marinho',r:[0,45],g:[0,70],b:[70,150]},{n:'Violeta',r:[90,190],g:[0,90],b:[190,255]},{n:'Roxo',r:[110,200],g:[0,90],b:[130,220]},{n:'Roxo escuro',r:[50,130],g:[0,60],b:[70,145]},{n:'Magenta',r:[190,255],g:[0,90],b:[170,255]},{n:'Marrom',r:[90,185],g:[40,120],b:[0,70]},{n:'Marrom escuro',r:[50,110],g:[15,70],b:[0,45]},{n:'Bege',r:[190,240],g:[170,225],b:[140,205]},{n:'Creme',r:[225,255],g:[205,245],b:[175,225]},{n:'Salmão',r:[215,255],g:[110,185],b:[90,165]},{n:'Dourado',r:[190,255],g:[150,225],b:[0,90]},{n:'Prata',r:[165,225],g:[165,225],b:[165,225]},{n:'Turquesa',r:[0,80],g:[170,245],b:[170,245]},{n:'Índigo',r:[40,120],g:[0,70],b:[140,225]},{n:'Coral',r:[225,255],g:[90,165],b:[70,145]},{n:'Lavanda',r:[170,230],g:[140,210],b:[215,255]},{n:'Oliva',r:[90,175],g:[110,185],b:[0,70]},{n:'Terracota',r:[170,230],g:[70,135],b:[40,105]},{n:'Esmeralda',r:[0,80],g:[140,210],b:[70,160]}],
+  en:[{n:'Black',r:[0,35],g:[0,35],b:[0,35]},{n:'White',r:[220,255],g:[220,255],b:[220,255]},{n:'Dark gray',r:[36,90],g:[36,90],b:[36,90]},{n:'Gray',r:[91,160],g:[91,160],b:[91,160]},{n:'Light gray',r:[161,219],g:[161,219],b:[161,219]},{n:'Red',r:[180,255],g:[0,70],b:[0,70]},{n:'Dark red',r:[100,179],g:[0,50],b:[0,50]},{n:'Pink',r:[220,255],g:[100,190],b:[140,210]},{n:'Hot pink',r:[210,255],g:[0,90],b:[100,190]},{n:'Orange',r:[210,255],g:[90,180],b:[0,70]},{n:'Dark orange',r:[160,209],g:[50,130],b:[0,50]},{n:'Yellow',r:[210,255],g:[190,255],b:[0,90]},{n:'Lime green',r:[90,200],g:[210,255],b:[0,90]},{n:'Green',r:[0,90],g:[180,255],b:[0,90]},{n:'Dark green',r:[0,70],g:[80,179],b:[0,70]},{n:'Teal',r:[0,80],g:[140,220],b:[110,200]},{n:'Cyan',r:[0,80],g:[190,255],b:[190,255]},{n:'Light blue',r:[90,210],g:[170,245],b:[210,255]},{n:'Blue',r:[0,80],g:[70,160],b:[190,255]},{n:'Dark blue',r:[0,60],g:[0,90],b:[120,210]},{n:'Navy',r:[0,45],g:[0,70],b:[70,150]},{n:'Violet',r:[90,190],g:[0,90],b:[190,255]},{n:'Purple',r:[110,200],g:[0,90],b:[130,220]},{n:'Dark purple',r:[50,130],g:[0,60],b:[70,145]},{n:'Magenta',r:[190,255],g:[0,90],b:[170,255]},{n:'Brown',r:[90,185],g:[40,120],b:[0,70]},{n:'Dark brown',r:[50,110],g:[15,70],b:[0,45]},{n:'Beige',r:[190,240],g:[170,225],b:[140,205]},{n:'Cream',r:[225,255],g:[205,245],b:[175,225]},{n:'Salmon',r:[215,255],g:[110,185],b:[90,165]},{n:'Gold',r:[190,255],g:[150,225],b:[0,90]},{n:'Silver',r:[165,225],g:[165,225],b:[165,225]},{n:'Turquoise',r:[0,80],g:[170,245],b:[170,245]},{n:'Indigo',r:[40,120],g:[0,70],b:[140,225]},{n:'Coral',r:[225,255],g:[90,165],b:[70,145]},{n:'Lavender',r:[170,230],g:[140,210],b:[215,255]},{n:'Olive',r:[90,175],g:[110,185],b:[0,70]},{n:'Terracotta',r:[170,230],g:[70,135],b:[40,105]},{n:'Emerald',r:[0,80],g:[140,210],b:[70,160]}],
+  es:[{n:'Negro',r:[0,35],g:[0,35],b:[0,35]},{n:'Blanco',r:[220,255],g:[220,255],b:[220,255]},{n:'Gris oscuro',r:[36,90],g:[36,90],b:[36,90]},{n:'Gris',r:[91,160],g:[91,160],b:[91,160]},{n:'Gris claro',r:[161,219],g:[161,219],b:[161,219]},{n:'Rojo',r:[180,255],g:[0,70],b:[0,70]},{n:'Rojo oscuro',r:[100,179],g:[0,50],b:[0,50]},{n:'Rosa',r:[220,255],g:[100,190],b:[140,210]},{n:'Rosa fuerte',r:[210,255],g:[0,90],b:[100,190]},{n:'Naranja',r:[210,255],g:[90,180],b:[0,70]},{n:'Naranja oscuro',r:[160,209],g:[50,130],b:[0,50]},{n:'Amarillo',r:[210,255],g:[190,255],b:[0,90]},{n:'Verde lima',r:[90,200],g:[210,255],b:[0,90]},{n:'Verde',r:[0,90],g:[180,255],b:[0,90]},{n:'Verde oscuro',r:[0,70],g:[80,179],b:[0,70]},{n:'Verde azulado',r:[0,80],g:[140,220],b:[110,200]},{n:'Cian',r:[0,80],g:[190,255],b:[190,255]},{n:'Azul claro',r:[90,210],g:[170,245],b:[210,255]},{n:'Azul',r:[0,80],g:[70,160],b:[190,255]},{n:'Azul oscuro',r:[0,60],g:[0,90],b:[120,210]},{n:'Azul marino',r:[0,45],g:[0,70],b:[70,150]},{n:'Violeta',r:[90,190],g:[0,90],b:[190,255]},{n:'Morado',r:[110,200],g:[0,90],b:[130,220]},{n:'Morado oscuro',r:[50,130],g:[0,60],b:[70,145]},{n:'Magenta',r:[190,255],g:[0,90],b:[170,255]},{n:'Marrón',r:[90,185],g:[40,120],b:[0,70]},{n:'Marrón oscuro',r:[50,110],g:[15,70],b:[0,45]},{n:'Beige',r:[190,240],g:[170,225],b:[140,205]},{n:'Crema',r:[225,255],g:[205,245],b:[175,225]},{n:'Salmón',r:[215,255],g:[110,185],b:[90,165]},{n:'Dorado',r:[190,255],g:[150,225],b:[0,90]},{n:'Plateado',r:[165,225],g:[165,225],b:[165,225]},{n:'Turquesa',r:[0,80],g:[170,245],b:[170,245]},{n:'Índigo',r:[40,120],g:[0,70],b:[140,225]},{n:'Coral',r:[225,255],g:[90,165],b:[70,145]},{n:'Lavanda',r:[170,230],g:[140,210],b:[215,255]},{n:'Oliva',r:[90,175],g:[110,185],b:[0,70]},{n:'Terracota',r:[170,230],g:[70,135],b:[40,105]},{n:'Esmeralda',r:[0,80],g:[140,210],b:[70,160]}],
+  fr:[{n:'Noir',r:[0,35],g:[0,35],b:[0,35]},{n:'Blanc',r:[220,255],g:[220,255],b:[220,255]},{n:'Gris foncé',r:[36,90],g:[36,90],b:[36,90]},{n:'Gris',r:[91,160],g:[91,160],b:[91,160]},{n:'Gris clair',r:[161,219],g:[161,219],b:[161,219]},{n:'Rouge',r:[180,255],g:[0,70],b:[0,70]},{n:'Rouge foncé',r:[100,179],g:[0,50],b:[0,50]},{n:'Rose',r:[220,255],g:[100,190],b:[140,210]},{n:'Rose vif',r:[210,255],g:[0,90],b:[100,190]},{n:'Orange',r:[210,255],g:[90,180],b:[0,70]},{n:'Orange foncé',r:[160,209],g:[50,130],b:[0,50]},{n:'Jaune',r:[210,255],g:[190,255],b:[0,90]},{n:'Vert citron',r:[90,200],g:[210,255],b:[0,90]},{n:'Vert',r:[0,90],g:[180,255],b:[0,90]},{n:'Vert foncé',r:[0,70],g:[80,179],b:[0,70]},{n:'Bleu-vert',r:[0,80],g:[140,220],b:[110,200]},{n:'Cyan',r:[0,80],g:[190,255],b:[190,255]},{n:'Bleu clair',r:[90,210],g:[170,245],b:[210,255]},{n:'Bleu',r:[0,80],g:[70,160],b:[190,255]},{n:'Bleu foncé',r:[0,60],g:[0,90],b:[120,210]},{n:'Bleu marine',r:[0,45],g:[0,70],b:[70,150]},{n:'Violet clair',r:[90,190],g:[0,90],b:[190,255]},{n:'Violet',r:[110,200],g:[0,90],b:[130,220]},{n:'Violet foncé',r:[50,130],g:[0,60],b:[70,145]},{n:'Magenta',r:[190,255],g:[0,90],b:[170,255]},{n:'Marron',r:[90,185],g:[40,120],b:[0,70]},{n:'Marron foncé',r:[50,110],g:[15,70],b:[0,45]},{n:'Beige',r:[190,240],g:[170,225],b:[140,205]},{n:'Crème',r:[225,255],g:[205,245],b:[175,225]},{n:'Saumon',r:[215,255],g:[110,185],b:[90,165]},{n:'Or',r:[190,255],g:[150,225],b:[0,90]},{n:'Argent',r:[165,225],g:[165,225],b:[165,225]},{n:'Turquoise',r:[0,80],g:[170,245],b:[170,245]},{n:'Indigo',r:[40,120],g:[0,70],b:[140,225]},{n:'Corail',r:[225,255],g:[90,165],b:[70,145]},{n:'Lavande',r:[170,230],g:[140,210],b:[215,255]},{n:'Olive',r:[90,175],g:[110,185],b:[0,70]},{n:'Terracotta',r:[170,230],g:[70,135],b:[40,105]},{n:'Émeraude',r:[0,80],g:[140,210],b:[70,160]}],
+  de:[{n:'Schwarz',r:[0,35],g:[0,35],b:[0,35]},{n:'Weiß',r:[220,255],g:[220,255],b:[220,255]},{n:'Dunkelgrau',r:[36,90],g:[36,90],b:[36,90]},{n:'Grau',r:[91,160],g:[91,160],b:[91,160]},{n:'Hellgrau',r:[161,219],g:[161,219],b:[161,219]},{n:'Rot',r:[180,255],g:[0,70],b:[0,70]},{n:'Dunkelrot',r:[100,179],g:[0,50],b:[0,50]},{n:'Rosa',r:[220,255],g:[100,190],b:[140,210]},{n:'Pink',r:[210,255],g:[0,90],b:[100,190]},{n:'Orange',r:[210,255],g:[90,180],b:[0,70]},{n:'Dunkelorange',r:[160,209],g:[50,130],b:[0,50]},{n:'Gelb',r:[210,255],g:[190,255],b:[0,90]},{n:'Limette',r:[90,200],g:[210,255],b:[0,90]},{n:'Grün',r:[0,90],g:[180,255],b:[0,90]},{n:'Dunkelgrün',r:[0,70],g:[80,179],b:[0,70]},{n:'Blaugrün',r:[0,80],g:[140,220],b:[110,200]},{n:'Cyan',r:[0,80],g:[190,255],b:[190,255]},{n:'Hellblau',r:[90,210],g:[170,245],b:[210,255]},{n:'Blau',r:[0,80],g:[70,160],b:[190,255]},{n:'Dunkelblau',r:[0,60],g:[0,90],b:[120,210]},{n:'Marineblau',r:[0,45],g:[0,70],b:[70,150]},{n:'Violett',r:[90,190],g:[0,90],b:[190,255]},{n:'Lila',r:[110,200],g:[0,90],b:[130,220]},{n:'Dunkellila',r:[50,130],g:[0,60],b:[70,145]},{n:'Magenta',r:[190,255],g:[0,90],b:[170,255]},{n:'Braun',r:[90,185],g:[40,120],b:[0,70]},{n:'Dunkelbraun',r:[50,110],g:[15,70],b:[0,45]},{n:'Beige',r:[190,240],g:[170,225],b:[140,205]},{n:'Creme',r:[225,255],g:[205,245],b:[175,225]},{n:'Lachs',r:[215,255],g:[110,185],b:[90,165]},{n:'Gold',r:[190,255],g:[150,225],b:[0,90]},{n:'Silber',r:[165,225],g:[165,225],b:[165,225]},{n:'Türkis',r:[0,80],g:[170,245],b:[170,245]},{n:'Indigo',r:[40,120],g:[0,70],b:[140,225]},{n:'Koralle',r:[225,255],g:[90,165],b:[70,145]},{n:'Lavendel',r:[170,230],g:[140,210],b:[215,255]},{n:'Olive',r:[90,175],g:[110,185],b:[0,70]},{n:'Terrakotta',r:[170,230],g:[70,135],b:[40,105]},{n:'Smaragd',r:[0,80],g:[140,210],b:[70,160]}],
+  it:[{n:'Nero',r:[0,35],g:[0,35],b:[0,35]},{n:'Bianco',r:[220,255],g:[220,255],b:[220,255]},{n:'Grigio scuro',r:[36,90],g:[36,90],b:[36,90]},{n:'Grigio',r:[91,160],g:[91,160],b:[91,160]},{n:'Grigio chiaro',r:[161,219],g:[161,219],b:[161,219]},{n:'Rosso',r:[180,255],g:[0,70],b:[0,70]},{n:'Rosso scuro',r:[100,179],g:[0,50],b:[0,50]},{n:'Rosa',r:[220,255],g:[100,190],b:[140,210]},{n:'Rosa acceso',r:[210,255],g:[0,90],b:[100,190]},{n:'Arancione',r:[210,255],g:[90,180],b:[0,70]},{n:'Arancione scuro',r:[160,209],g:[50,130],b:[0,50]},{n:'Giallo',r:[210,255],g:[190,255],b:[0,90]},{n:'Verde lime',r:[90,200],g:[210,255],b:[0,90]},{n:'Verde',r:[0,90],g:[180,255],b:[0,90]},{n:'Verde scuro',r:[0,70],g:[80,179],b:[0,70]},{n:'Verde acqua',r:[0,80],g:[140,220],b:[110,200]},{n:'Ciano',r:[0,80],g:[190,255],b:[190,255]},{n:'Azzurro',r:[90,210],g:[170,245],b:[210,255]},{n:'Blu',r:[0,80],g:[70,160],b:[190,255]},{n:'Blu scuro',r:[0,60],g:[0,90],b:[120,210]},{n:'Blu marino',r:[0,45],g:[0,70],b:[70,150]},{n:'Viola chiaro',r:[90,190],g:[0,90],b:[190,255]},{n:'Viola',r:[110,200],g:[0,90],b:[130,220]},{n:'Viola scuro',r:[50,130],g:[0,60],b:[70,145]},{n:'Magenta',r:[190,255],g:[0,90],b:[170,255]},{n:'Marrone',r:[90,185],g:[40,120],b:[0,70]},{n:'Marrone scuro',r:[50,110],g:[15,70],b:[0,45]},{n:'Beige',r:[190,240],g:[170,225],b:[140,205]},{n:'Crema',r:[225,255],g:[205,245],b:[175,225]},{n:'Salmone',r:[215,255],g:[110,185],b:[90,165]},{n:'Oro',r:[190,255],g:[150,225],b:[0,90]},{n:'Argento',r:[165,225],g:[165,225],b:[165,225]},{n:'Turchese',r:[0,80],g:[170,245],b:[170,245]},{n:'Indaco',r:[40,120],g:[0,70],b:[140,225]},{n:'Corallo',r:[225,255],g:[90,165],b:[70,145]},{n:'Lavanda',r:[170,230],g:[140,210],b:[215,255]},{n:'Oliva',r:[90,175],g:[110,185],b:[0,70]},{n:'Terracotta',r:[170,230],g:[70,135],b:[40,105]},{n:'Smeraldo',r:[0,80],g:[140,210],b:[70,160]}],
+  ja:[{n:'黒',r:[0,35],g:[0,35],b:[0,35]},{n:'白',r:[220,255],g:[220,255],b:[220,255]},{n:'濃いグレー',r:[36,90],g:[36,90],b:[36,90]},{n:'グレー',r:[91,160],g:[91,160],b:[91,160]},{n:'薄いグレー',r:[161,219],g:[161,219],b:[161,219]},{n:'赤',r:[180,255],g:[0,70],b:[0,70]},{n:'暗い赤',r:[100,179],g:[0,50],b:[0,50]},{n:'ピンク',r:[220,255],g:[100,190],b:[140,210]},{n:'ホットピンク',r:[210,255],g:[0,90],b:[100,190]},{n:'オレンジ',r:[210,255],g:[90,180],b:[0,70]},{n:'濃いオレンジ',r:[160,209],g:[50,130],b:[0,50]},{n:'黄色',r:[210,255],g:[190,255],b:[0,90]},{n:'黄緑',r:[90,200],g:[210,255],b:[0,90]},{n:'緑',r:[0,90],g:[180,255],b:[0,90]},{n:'濃い緑',r:[0,70],g:[80,179],b:[0,70]},{n:'青緑',r:[0,80],g:[140,220],b:[110,200]},{n:'シアン',r:[0,80],g:[190,255],b:[190,255]},{n:'水色',r:[90,210],g:[170,245],b:[210,255]},{n:'青',r:[0,80],g:[70,160],b:[190,255]},{n:'濃い青',r:[0,60],g:[0,90],b:[120,210]},{n:'ネイビー',r:[0,45],g:[0,70],b:[70,150]},{n:'バイオレット',r:[90,190],g:[0,90],b:[190,255]},{n:'紫',r:[110,200],g:[0,90],b:[130,220]},{n:'濃い紫',r:[50,130],g:[0,60],b:[70,145]},{n:'マゼンタ',r:[190,255],g:[0,90],b:[170,255]},{n:'茶色',r:[90,185],g:[40,120],b:[0,70]},{n:'濃い茶色',r:[50,110],g:[15,70],b:[0,45]},{n:'ベージュ',r:[190,240],g:[170,225],b:[140,205]},{n:'クリーム',r:[225,255],g:[205,245],b:[175,225]},{n:'サーモン',r:[215,255],g:[110,185],b:[90,165]},{n:'ゴールド',r:[190,255],g:[150,225],b:[0,90]},{n:'シルバー',r:[165,225],g:[165,225],b:[165,225]},{n:'ターコイズ',r:[0,80],g:[170,245],b:[170,245]},{n:'インディゴ',r:[40,120],g:[0,70],b:[140,225]},{n:'コーラル',r:[225,255],g:[90,165],b:[70,145]},{n:'ラベンダー',r:[170,230],g:[140,210],b:[215,255]},{n:'オリーブ',r:[90,175],g:[110,185],b:[0,70]},{n:'テラコッタ',r:[170,230],g:[70,135],b:[40,105]},{n:'エメラルド',r:[0,80],g:[140,210],b:[70,160]}],
+  zh:[{n:'黑色',r:[0,35],g:[0,35],b:[0,35]},{n:'白色',r:[220,255],g:[220,255],b:[220,255]},{n:'深灰色',r:[36,90],g:[36,90],b:[36,90]},{n:'灰色',r:[91,160],g:[91,160],b:[91,160]},{n:'浅灰色',r:[161,219],g:[161,219],b:[161,219]},{n:'红色',r:[180,255],g:[0,70],b:[0,70]},{n:'深红色',r:[100,179],g:[0,50],b:[0,50]},{n:'粉红色',r:[220,255],g:[100,190],b:[140,210]},{n:'玫瑰红',r:[210,255],g:[0,90],b:[100,190]},{n:'橙色',r:[210,255],g:[90,180],b:[0,70]},{n:'深橙色',r:[160,209],g:[50,130],b:[0,50]},{n:'黄色',r:[210,255],g:[190,255],b:[0,90]},{n:'青柠绿',r:[90,200],g:[210,255],b:[0,90]},{n:'绿色',r:[0,90],g:[180,255],b:[0,90]},{n:'深绿色',r:[0,70],g:[80,179],b:[0,70]},{n:'蓝绿色',r:[0,80],g:[140,220],b:[110,200]},{n:'青色',r:[0,80],g:[190,255],b:[190,255]},{n:'浅蓝色',r:[90,210],g:[170,245],b:[210,255]},{n:'蓝色',r:[0,80],g:[70,160],b:[190,255]},{n:'深蓝色',r:[0,60],g:[0,90],b:[120,210]},{n:'海军蓝',r:[0,45],g:[0,70],b:[70,150]},{n:'紫罗兰',r:[90,190],g:[0,90],b:[190,255]},{n:'紫色',r:[110,200],g:[0,90],b:[130,220]},{n:'深紫色',r:[50,130],g:[0,60],b:[70,145]},{n:'洋红色',r:[190,255],g:[0,90],b:[170,255]},{n:'棕色',r:[90,185],g:[40,120],b:[0,70]},{n:'深棕色',r:[50,110],g:[15,70],b:[0,45]},{n:'米色',r:[190,240],g:[170,225],b:[140,205]},{n:'奶油色',r:[225,255],g:[205,245],b:[175,225]},{n:'鲑鱼色',r:[215,255],g:[110,185],b:[90,165]},{n:'金色',r:[190,255],g:[150,225],b:[0,90]},{n:'银色',r:[165,225],g:[165,225],b:[165,225]},{n:'青绿色',r:[0,80],g:[170,245],b:[170,245]},{n:'靛蓝色',r:[40,120],g:[0,70],b:[140,225]},{n:'珊瑚色',r:[225,255],g:[90,165],b:[70,145]},{n:'薰衣草',r:[170,230],g:[140,210],b:[215,255]},{n:'橄榄色',r:[90,175],g:[110,185],b:[0,70]},{n:'赤陶色',r:[170,230],g:[70,135],b:[40,105]},{n:'翡翠绿',r:[0,80],g:[140,210],b:[70,160]}],
+};
+
+// ── ESTADO ───────────────────────────────────────────────────
+let lang='pt', frozen=false, running=false, lastHex='', lastName='', hist=[];
+const $=id=>document.getElementById(id);
+const vid=$('vid'), cnv=$('cnv'), ctx=cnv.getContext('2d',{willReadFrequently:true});
+
+// Detectar HTTPS
+window.addEventListener('load',()=>{
+  const proto=location.protocol;
+  if(proto!=='https:'&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1'){
+    $('httpsWarn').classList.add('show');
+  }
+});
+
+// ── IDIOMA ───────────────────────────────────────────────────
+function toggleDD(){$('dd').classList.toggle('open')}
+document.addEventListener('click',e=>{if(!e.target.closest('.lang-wrap'))$('dd').classList.remove('open')});
+
+function setLang(l){
+  lang=l;
+  const t=T[l];
+  $('lf').textContent=t.f; $('lc').textContent=t.c;
+  $('dd').classList.remove('open');
+  document.querySelectorAll('.lang-opt').forEach((o,i)=>o.classList.toggle('active',['pt','en','es','fr','de','it','ja','zh'][i]===l));
+  if(!running){$('ovT').textContent=t.ovT;$('ovM').textContent=t.ovM;$('sb').textContent=t.start;}
+  $('h1').textContent=t.h1; $('h2').textContent=t.h2;
+  $('fl').textContent=frozen?t.uf:t.fz;
+  $('hl').textContent=t.hl; $('fb').textContent=t.fb;
+  if(lastHex){const[r,g,b]=htr(lastHex);$('cn').textContent=getName(r,g,b);}
+  renderHist();
+}
+
+// ── CÂMERA ───────────────────────────────────────────────────
+async function startCam(){
+  const t=T[lang], btn=$('sb');
+  btn.disabled=true; btn.textContent='⏳...';
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    showErr(t.errG); btn.disabled=false; btn.textContent=t.start; return;
+  }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},
+      audio:false
+    });
+    vid.srcObject=stream;
+    vid.onloadedmetadata=()=>{
+      vid.play();
+      cnv.width=vid.videoWidth||1280; cnv.height=vid.videoHeight||720;
+      $('ov').classList.add('gone');
+      $('xh').style.display='block';
+      $('scan').style.display='block';
+      $('fzb').disabled=false;
+      running=true; loop();
+    };
+  }catch(e){
+    btn.disabled=false; btn.textContent=T[lang].start;
+    const t=T[lang];
+    if(e.name==='NotAllowedError'||e.name==='PermissionDeniedError') showErr(t.errD);
+    else if(e.name==='NotFoundError') showErr(t.errN);
+    else showErr(t.errG+' ('+e.name+')');
+  }
+}
+
+function showErr(m){
+  $('ovT').textContent='⚠️';
+  const el=$('ovM'); el.textContent=m; el.classList.add('err');
+}
+
+// ── LOOP DE DETECÇÃO ─────────────────────────────────────────
+function loop(){
+  if(!running)return;
+  if(!frozen&&vid.readyState>=2){
+    ctx.drawImage(vid,0,0,cnv.width,cnv.height);
+    const cx=Math.floor(cnv.width/2), cy=Math.floor(cnv.height/2), s=8;
+    try{
+      const d=ctx.getImageData(cx-s,cy-s,s*2,s*2).data;
+      let r=0,g=0,b=0,n=0;
+      for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];n++;}
+      if(n) paint(Math.round(r/n),Math.round(g/n),Math.round(b/n));
+    }catch(e){}
+  }
+  requestAnimationFrame(loop);
+}
+
+// ── COR ──────────────────────────────────────────────────────
+function getName(r,g,b){
+  const db=C[lang]||C.pt;
+  let best=db[0],bd=Infinity;
+  for(const c of db){
+    const cr=(c.r[0]+c.r[1])/2,cg=(c.g[0]+c.g[1])/2,cb=(c.b[0]+c.b[1])/2;
+    const inR=r>=c.r[0]&&r<=c.r[1],inG=g>=c.g[0]&&g<=c.g[1],inB=b>=c.b[0]&&b<=c.b[1];
+    let d=Math.sqrt((r-cr)**2+(g-cg)**2+(b-cb)**2);
+    if(inR&&inG&&inB)d-=40;
+    if(d<bd){bd=d;best=c;}
+  }
+  return best.n;
+}
+function rth(r,g,b){return'#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0').toUpperCase()).join('');}
+function htr(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
+
+function paint(r,g,b){
+  const hex=rth(r,g,b); if(hex===lastHex)return; lastHex=hex;
+  const name=getName(r,g,b), css=`rgb(${r},${g},${b})`;
+  $('sw').style.background=css; $('dot').style.background=css;
+  $('cn').textContent=name; $('hx').textContent=hex; $('rb').textContent=`R${r} G${g} B${b}`;
+  if(name!==lastName){lastName=name;hist.unshift({r,g,b,hex,name});if(hist.length>14)hist.pop();renderHist();}
+}
+
+// ── HISTÓRICO ────────────────────────────────────────────────
+function renderHist(){
+  const row=$('hr');
+  if(!hist.length){row.innerHTML=`<span class="hempty">${T[lang].he}</span>`;return;}
+  row.innerHTML=hist.map(h=>`<div class="chip"><div class="hdot" style="background:rgb(${h.r},${h.g},${h.b})"></div>${getName(h.r,h.g,h.b)}</div>`).join('');
+}
+
+// ── PAUSAR ───────────────────────────────────────────────────
+function toggleFreeze(){
+  frozen=!frozen;
+  const t=T[lang], fzb=$('fzb'), fb=$('fb'), scan=$('scan');
+  fzb.classList.toggle('on',frozen);
+  $('fi').textContent=frozen?'▶':'⏸';
+  $('fl').textContent=frozen?t.uf:t.fz;
+  fb.classList.toggle('show',frozen); fb.textContent=t.fb;
+  scan.style.display=frozen?'none':'block';
+}
+</script>
+</body>
+</html>
