@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#080810">
+<title>ColorVision AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#080810;--surface:#0e0e1c;--border:rgba(255,255,255,.07);
+  --accent:#b8ff57;--accent2:#57c8ff;--text:#f0f0f8;--muted:rgba(240,240,248,.38);
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+  font-family:'DM Mono',monospace}
+body{display:flex;flex-direction:column;position:relative;max-width:480px;margin:0 auto}
+
+/* HTTPS */
+#httpsWarn{display:none;position:fixed;inset:0;background:var(--bg);z-index:999;
+  flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:36px;text-align:center}
+#httpsWarn.show{display:flex}
+.w-title{font-family:'Syne',sans-serif;font-size:1.3rem;color:var(--accent)}
+.w-msg{font-size:.83rem;line-height:1.8;color:var(--muted);max-width:300px}
+.w-box{background:rgba(184,255,87,.05);border:1px solid rgba(184,255,87,.2);border-radius:16px;
+  padding:18px 20px;font-size:.78rem;line-height:2.1;color:var(--accent);text-align:left;
+  width:100%;max-width:340px}
+.w-box b{color:#fff}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;
+  background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;z-index:40}
+.logo{display:flex;align-items:center;gap:9px}
+.logo-mark{width:30px;height:30px;background:var(--accent);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:16px}
+.logo-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;letter-spacing:-.03em}
+.logo-name em{color:var(--accent);font-style:normal}
+.logo-ai{font-size:.55rem;color:var(--accent2);border:1px solid rgba(87,200,255,.3);
+  border-radius:4px;padding:1px 5px;margin-left:3px;vertical-align:middle;letter-spacing:.06em}
+.btn-cfg{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:50px;
+  padding:7px 13px;color:var(--muted);font-size:.68rem;cursor:pointer;font-family:'DM Mono',monospace;
+  transition:all .15s;letter-spacing:.02em}
+.btn-cfg:active{opacity:.7}
+
+/* SETUP SHEET */
+#setupSheet{display:none;position:fixed;inset:0;background:var(--bg);z-index:90;
+  flex-direction:column;align-items:center;overflow-y:auto}
+#setupSheet.show{display:flex}
+.ss-inner{display:flex;flex-direction:column;align-items:center;gap:18px;
+  padding:48px 28px 40px;width:100%;max-width:420px}
+.ss-logo{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.ss-logo-mark{width:46px;height:46px;background:var(--accent);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  box-shadow:0 0 24px rgba(184,255,87,.3)}
+.ss-logo-text{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800}
+.ss-logo-text em{color:var(--accent);font-style:normal}
+.ss-sub{font-size:.8rem;color:var(--muted);text-align:center;line-height:1.7;max-width:290px}
+.ss-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:18px 20px;width:100%}
+.ss-label{font-size:.6rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px}
+.ss-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:12px;padding:13px 15px;color:var(--text);font-family:'DM Mono',monospace;
+  font-size:.82rem;outline:none;transition:border-color .2s}
+.ss-input:focus{border-color:rgba(184,255,87,.4)}
+.ss-input::placeholder{color:rgba(240,240,248,.18)}
+.ss-hint{font-size:.7rem;color:var(--muted);line-height:1.75;margin-top:9px}
+.ss-hint a{color:var(--accent2);text-decoration:none}
+.lang-row{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+.lp{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:50px;
+  padding:6px 13px;font-size:.75rem;cursor:pointer;transition:all .15s;color:var(--muted)}
+.lp.on{background:rgba(184,255,87,.1);border-color:rgba(184,255,87,.35);color:var(--accent)}
+.btn-go{width:100%;background:var(--accent);color:#080810;border:none;border-radius:50px;
+  padding:16px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;
+  transition:opacity .2s,transform .12s;letter-spacing:-.01em}
+.btn-go:active{opacity:.85;transform:scale(.98)}
+.btn-go:disabled{opacity:.35;cursor:default}
+
+/* MAIN APP */
+#app{display:none;flex-direction:column;height:100%}
+#app.show{display:flex}
+
+/* CAMERA */
+.cam-wrap{flex:1;position:relative;background:#000;overflow:hidden;min-height:0;
+  display:flex;align-items:center;justify-content:center}
+video{width:100%;height:100%;object-fit:cover;display:block}
+#oc{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:10}
+
+/* BOOT OVERLAY */
+.boot-ov{position:absolute;inset:0;background:rgba(8,8,16,.92);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  padding:32px;text-align:center;z-index:20;backdrop-filter:blur(4px)}
+.boot-ov.gone{display:none}
+.boot-icon{font-size:2.8rem;animation:bob 2.2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.boot-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800}
+.boot-msg{font-size:.8rem;line-height:1.65;color:var(--muted);max-width:280px}
+.boot-msg.err{color:#ff6b6b}
+
+/* INFO BAR */
+.info-bar{background:var(--surface);border-top:1px solid var(--border);
+  padding:11px 16px;flex-shrink:0;display:none;min-height:66px}
+.info-bar.show{display:block}
+.ib-row{display:flex;align-items:center;gap:10px}
+.ib-swatch{width:42px;height:42px;border-radius:10px;flex-shrink:0;
+  border:1px solid rgba(255,255,255,.1);transition:background .2s}
+.ib-data{flex:1;min-width:0}
+.ib-count{font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.ib-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;
+  letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib-chips{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.ib-chip{border-radius:50px;padding:3px 9px;font-size:.62rem;font-family:'DM Mono',monospace}
+
+/* SCAN BAR */
+.scan-bar{display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:12px 16px 18px;background:var(--surface);border-top:1px solid var(--border);
+  flex-shrink:0;z-index:30}
+.btn-scan{flex:1;background:var(--accent);color:#080810;border:none;border-radius:50px;
+  padding:15px 20px;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  letter-spacing:-.01em;transition:all .15s;max-width:260px}
+.btn-scan:active{transform:scale(.97)}
+.btn-scan:disabled{opacity:.38;cursor:default;transform:none}
+.btn-scan.busy{background:rgba(184,255,87,.1);color:var(--accent);
+  border:1px solid rgba(184,255,87,.3)}
+.btn-flip{width:46px;height:46px;background:rgba(255,255,255,.05);border:1px solid var(--border);
+  border-radius:50%;color:var(--muted);font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.btn-flip:active{opacity:.7;transform:scale(.93)}
+.spin{width:15px;height:15px;border:2px solid rgba(8,8,16,.25);border-top-color:#080810;
+  border-radius:50%;animation:spin .55s linear infinite;flex-shrink:0}
+.spin.lt{border-color:rgba(184,255,87,.2);border-top-color:var(--accent)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* CONFIG MODAL */
+.modal-bd{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);
+  z-index:200;align-items:flex-end;backdrop-filter:blur(6px)}
+.modal-bd.open{display:flex}
+.modal-sheet{background:#111122;border:1px solid var(--border);
+  border-radius:24px 24px 0 0;padding:26px 22px 44px;width:100%;max-width:480px;margin:0 auto}
+.modal-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;margin-bottom:4px}
+.modal-sub{font-size:.75rem;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.modal-actions{display:flex;gap:10px;margin-top:16px}
+.btn-cancel{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border);
+  border-radius:50px;padding:13px;color:var(--text);font-family:'DM Mono',monospace;font-size:.82rem;cursor:pointer}
+.btn-save{flex:2;background:var(--accent);color:#080810;border:none;
+  border-radius:50px;padding:13px;font-family:'Syne',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer}
+
+/* GRID SIZE TOGGLE */
+.grid-row{display:flex;gap:7px;margin-top:0}
+.gp{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;
+  padding:7px 14px;font-size:.72rem;cursor:pointer;color:var(--muted);transition:all .15s;flex:1;text-align:center}
+.gp.on{background:rgba(184,255,87,.1);border-color:rgba(184,255,87,.35);color:var(--accent)}
+</style>
+</head>
+<body>
+
+<!-- HTTPS WARNING -->
+<div id="httpsWarn">
+  <div style="font-size:3rem">🔒</div>
+  <div class="w-title">HTTPS necessário</div>
+  <div class="w-msg">A câmera só funciona em páginas seguras. Hospede gratuitamente:</div>
+  <div class="w-box">
+    <b>1.</b> Acesse <b style="color:var(--accent)">netlify.com/drop</b><br>
+    <b>2.</b> Arraste este arquivo HTML<br>
+    <b>3.</b> Abra o link no celular<br>
+    <b>4.</b> Permita o acesso à câmera ✓
+  </div>
+</div>
+
+<!-- SETUP -->
+<div id="setupSheet">
+  <div class="ss-inner">
+    <div class="ss-logo">
+      <div class="ss-logo-mark">👁</div>
+      <div class="ss-logo-text">Color<em>Vision</em></div>
+    </div>
+    <div class="ss-sub">Aponte a câmera — a IA identifica e enquadra as cores dos objetos na cena</div>
+
+    <div class="ss-card">
+      <div class="ss-label">Idioma / Language</div>
+      <div class="lang-row" id="setupLangRow">
+        <span class="lp on" data-l="pt">🇧🇷 PT</span>
+        <span class="lp" data-l="en">🇺🇸 EN</span>
+        <span class="lp" data-l="es">🇪🇸 ES</span>
+        <span class="lp" data-l="fr">🇫🇷 FR</span>
+        <span class="lp" data-l="de">🇩🇪 DE</span>
+        <span class="lp" data-l="it">🇮🇹 IT</span>
+        <span class="lp" data-l="ja">🇯🇵 JP</span>
+        <span class="lp" data-l="zh">🇨🇳 ZH</span>
+      </div>
+    </div>
+
+    <div class="ss-card">
+      <div class="ss-label">Groq API Key</div>
+      <input class="ss-input" id="keyIn" type="password" placeholder="gsk_…" autocomplete="off" spellcheck="false">
+      <div class="ss-hint">
+        Grátis em <a href="https://console.groq.com" target="_blank">console.groq.com</a> → API Keys → Create.<br>
+        Salva só no seu dispositivo.
+      </div>
+    </div>
+
+    <div class="ss-card">
+      <div class="ss-label">Divisão da cena</div>
+      <div class="grid-row" id="setupGridRow">
+        <span class="gp on" data-g="2">2 × 3</span>
+        <span class="gp" data-g="3">3 × 4</span>
+        <span class="gp" data-g="4">4 × 5</span>
+      </div>
+      <div class="ss-hint" style="margin-top:8px">Mais divisões = mais zonas detectadas, análise um pouco mais lenta.</div>
+    </div>
+
+    <button class="btn-go" id="btnGo" onclick="initApp()">▶ Iniciar câmera</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">👁</div>
+      <div>
+        <div class="logo-name">Color<em>Vision</em><span class="logo-ai">AI</span></div>
+      </div>
+    </div>
+    <button class="btn-cfg" onclick="openCfg()">⚙ Config</button>
+  </header>
+
+  <div class="cam-wrap">
+    <video id="vid" autoplay playsinline muted></video>
+    <canvas id="oc"></canvas>
+    <div class="boot-ov" id="bootOv">
+      <div class="boot-icon">📷</div>
+      <div class="boot-title" id="bootT">Ativando câmera…</div>
+      <div class="boot-msg" id="bootM"></div>
+    </div>
+  </div>
+
+  <div class="info-bar" id="infoBar">
+    <div class="ib-row">
+      <div class="ib-swatch" id="ibSwatch"></div>
+      <div class="ib-data">
+        <div class="ib-count" id="ibCount"></div>
+        <div class="ib-name" id="ibName">—</div>
+        <div class="ib-chips" id="ibChips"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scan-bar">
+    <button class="btn-flip" onclick="flipCam()" id="btnFlip">🔄</button>
+    <button class="btn-scan" id="btnScan" onclick="doScan()" disabled>
+      <span id="scanIco">🎨</span>
+      <span id="scanLbl">Escanear cores</span>
+    </button>
+  </div>
+</div>
+
+<!-- CONFIG MODAL -->
+<div class="modal-bd" id="cfgModal" onclick="closeCfgOut(event)">
+  <div class="modal-sheet">
+    <div class="modal-title">Configurações</div>
+    <div class="modal-sub">Altere a API Key, idioma ou divisão da cena.</div>
+    <div class="ss-label">Groq API Key</div>
+    <input class="ss-input" id="cfgKey" type="password" placeholder="gsk_…" autocomplete="off">
+    <div class="ss-label" style="margin-top:14px">Idioma</div>
+    <div class="lang-row" id="cfgLangRow" style="justify-content:flex-start;margin-top:8px">
+      <span class="lp on" data-l="pt">🇧🇷 PT</span>
+      <span class="lp" data-l="en">🇺🇸 EN</span>
+      <span class="lp" data-l="es">🇪🇸 ES</span>
+      <span class="lp" data-l="fr">🇫🇷 FR</span>
+      <span class="lp" data-l="de">🇩🇪 DE</span>
+      <span class="lp" data-l="it">🇮🇹 IT</span>
+      <span class="lp" data-l="ja">🇯🇵 JP</span>
+      <span class="lp" data-l="zh">🇨🇳 ZH</span>
+    </div>
+    <div class="ss-label" style="margin-top:14px">Divisão da cena</div>
+    <div class="grid-row" id="cfgGridRow" style="margin-top:8px">
+      <span class="gp on" data-g="2">2 × 3</span>
+      <span class="gp" data-g="3">3 × 4</span>
+      <span class="gp" data-g="4">4 × 5</span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeCfg()">Cancelar</button>
+      <button class="btn-save" onclick="saveCfg()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STRINGS
+// ═══════════════════════════════════════════════
+const S = {
+  pt:{scan:'Escanear cores',busy:'Nomeando…',found:'zonas detectadas',none:'Sem cores distintas.',
+      camErr:'Erro na câmera. Requer HTTPS.',permErr:'Permissão negada. Permita a câmera.',
+      startLbl:'▶ Iniciar câmera'},
+  en:{scan:'Scan colors',busy:'Naming…',found:'zones detected',none:'No distinct colors.',
+      camErr:'Camera error. HTTPS required.',permErr:'Permission denied.',
+      startLbl:'▶ Start camera'},
+  es:{scan:'Escanear',busy:'Nombrando…',found:'zonas detectadas',none:'Sin colores distintos.',
+      camErr:'Error de cámara.',permErr:'Permiso denegado.',startLbl:'▶ Iniciar'},
+  fr:{scan:'Scanner',busy:'Nommage…',found:'zones détectées',none:'Aucune couleur.',
+      camErr:'Erreur caméra.',permErr:'Permission refusée.',startLbl:'▶ Démarrer'},
+  de:{scan:'Scannen',busy:'Benennen…',found:'Zonen erkannt',none:'Keine Farben.',
+      camErr:'Kamerafehler.',permErr:'Zugriff verweigert.',startLbl:'▶ Starten'},
+  it:{scan:'Scansiona',busy:'Denominazione…',found:'zone rilevate',none:'Nessun colore.',
+      camErr:'Errore fotocamera.',permErr:'Permesso negato.',startLbl:'▶ Avvia'},
+  ja:{scan:'スキャン',busy:'命名中…',found:'ゾーン検出',none:'色なし',
+      camErr:'カメラエラー。',permErr:'アクセス許可が必要。',startLbl:'▶ 開始'},
+  zh:{scan:'扫描',busy:'命名中…',found:'检测到区域',none:'无颜色。',
+      camErr:'摄像头错误。',permErr:'权限被拒绝。',startLbl:'▶ 启动'},
+};
+
+// ═══════════════════════════════════════════════
+// GROQ COLOR-NAMING PROMPT  (hex → language name)
+// ═══════════════════════════════════════════════
+const NAME_PROMPT = {
+  pt: (hexList) => `Você receberá uma lista de cores em hexadecimal. Para cada cor, responda com o nome comum dessa cor em português do Brasil. Seja específico (ex: "azul royal", "verde oliva", "laranja queimado"). Responda SOMENTE com JSON válido, sem markdown:\n{"names":["nome1","nome2",...]}\nCores: ${hexList}`,
+  en: (hexList) => `You will receive a list of hex colors. For each, provide its common color name in English. Be specific (e.g. "royal blue", "olive green", "burnt orange"). Respond ONLY with valid JSON, no markdown:\n{"names":["name1","name2",...]}\nColors: ${hexList}`,
+  es: (hexList) => `Recibirás una lista de colores hexadecimales. Para cada uno, da su nombre común en español. Sé específico. Solo JSON válido:\n{"names":["nombre1","nombre2",...]}\nColores: ${hexList}`,
+  fr: (hexList) => `Tu recevras une liste de couleurs hexadécimales. Pour chacune, donne son nom commun en français. Sois précis. Uniquement JSON valide:\n{"names":["nom1","nom2",...]}\nCouleurs: ${hexList}`,
+  de: (hexList) => `Du erhältst eine Liste von Hex-Farben. Gib für jede den deutschen Farbnamen an. Präzise sein. Nur gültiges JSON:\n{"names":["name1","name2",...]}\nFarben: ${hexList}`,
+  it: (hexList) => `Riceverai una lista di colori esadecimali. Per ciascuno, fornisci il nome comune in italiano. Solo JSON valido:\n{"names":["nome1","nome2",...]}\nColori: ${hexList}`,
+  ja: (hexList) => `16進数カラーリストを受け取ります。各色の一般的な日本語名を答えてください。有効なJSONのみ:\n{"names":["名前1","名前2",...]}\n色: ${hexList}`,
+  zh: (hexList) => `你会收到一个十六进制颜色列表。为每种颜色提供中文颜色名称。只返回有效JSON:\n{"names":["名称1","名称2",...]}\n颜色: ${hexList}`,
+};
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let lang     = 'pt';
+let apiKey   = '';
+let gridCols = 2;   // columns
+let gridRows = 3;   // rows (portrait: more rows than cols)
+let stream   = null;
+let facing   = 'environment';
+let busy     = false;
+
+const $ = id => document.getElementById(id);
+const vid = $('vid');
+const oc  = $('oc');
+const ctx = oc.getContext('2d');
+
+// ═══════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════
+window.addEventListener('load', () => {
+  const proto = location.protocol;
+  if (proto !== 'https:' && !['localhost','127.0.0.1'].includes(location.hostname)) {
+    $('httpsWarn').classList.add('show'); return;
+  }
+  lang   = localStorage.getItem('cv_lang')   || 'pt';
+  apiKey = localStorage.getItem('cv_apikey') || '';
+  const g = parseInt(localStorage.getItem('cv_grid') || '2');
+  setGrid(g);
+  if (apiKey) $('keyIn').value = apiKey;
+  setPills(lang, 'setupLangRow');
+  setGridPills(gridCols, 'setupGridRow');
+  $('btnGo').textContent = S[lang].startLbl;
+  $('setupSheet').classList.add('show');
+});
+
+// pill helpers
+function setPills(l, rowId) {
+  document.querySelectorAll(`#${rowId} .lp`).forEach(p => p.classList.toggle('on', p.dataset.l === l));
+}
+function setGridPills(g, rowId) {
+  document.querySelectorAll(`#${rowId} .gp`).forEach(p => p.classList.toggle('on', parseInt(p.dataset.g) === g));
+}
+function setGrid(g) {
+  gridCols = g;
+  gridRows = g + 1; // portrait: always 1 more row than cols
+}
+
+// wire up setup pills
+document.querySelectorAll('#setupLangRow .lp').forEach(p => p.addEventListener('click', () => {
+  lang = p.dataset.l; setPills(lang, 'setupLangRow'); $('btnGo').textContent = S[lang].startLbl;
+}));
+document.querySelectorAll('#setupGridRow .gp').forEach(p => p.addEventListener('click', () => {
+  setGrid(parseInt(p.dataset.g)); setGridPills(gridCols, 'setupGridRow');
+}));
+document.querySelectorAll('#cfgLangRow .lp').forEach(p => p.addEventListener('click', () => setPills(p.dataset.l, 'cfgLangRow')));
+document.querySelectorAll('#cfgGridRow .gp').forEach(p => p.addEventListener('click', () => setGridPills(parseInt(p.dataset.g), 'cfgGridRow')));
+
+// ═══════════════════════════════════════════════
+// INIT APP
+// ═══════════════════════════════════════════════
+async function initApp() {
+  const k = $('keyIn').value.trim();
+  if (!k || !k.startsWith('gsk_')) {
+    shake($('keyIn')); return;
+  }
+  apiKey = k;
+  localStorage.setItem('cv_apikey', k);
+  localStorage.setItem('cv_lang',   lang);
+  localStorage.setItem('cv_grid',   gridCols);
+  $('setupSheet').classList.remove('show');
+  $('app').classList.add('show');
+  $('scanLbl').textContent = S[lang].scan;
+  await startCam();
+}
+
+function shake(el) {
+  el.style.borderColor = '#ff6b6b';
+  el.style.animation = 'none';
+  setTimeout(() => { el.style.borderColor = ''; }, 2200);
+}
+
+// ═══════════════════════════════════════════════
+// CAMERA
+// ═══════════════════════════════════════════════
+async function startCam() {
+  $('bootOv').classList.remove('gone');
+  $('bootT').textContent = 'Ativando câmera…';
+  $('bootM').textContent = '';
+  $('bootM').classList.remove('err');
+  $('btnScan').disabled = true;
+  try {
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: facing }, width: { ideal: 1280 }, height: { ideal: 1600 } },
+      audio: false
+    });
+    vid.srcObject = stream;
+    vid.onloadedmetadata = () => {
+      vid.play();
+      syncCanvas();
+      $('bootOv').classList.add('gone');
+      $('btnScan').disabled = false;
+    };
+  } catch (e) {
+    $('bootT').textContent = '⚠️ Erro';
+    $('bootM').textContent = e.name === 'NotAllowedError' ? S[lang].permErr : S[lang].camErr;
+    $('bootM').classList.add('err');
+  }
+}
+
+async function flipCam() {
+  facing = facing === 'environment' ? 'user' : 'environment';
+  clearCanvas(); $('infoBar').classList.remove('show');
+  await startCam();
+}
+
+function syncCanvas() {
+  oc.width  = vid.videoWidth  || 1280;
+  oc.height = vid.videoHeight || 1600;
+}
+window.addEventListener('resize', syncCanvas);
+vid.addEventListener('resize', syncCanvas);
+
+// ═══════════════════════════════════════════════
+// SCAN — main entry
+// ═══════════════════════════════════════════════
+async function doScan() {
+  if (busy) return;
+  busy = true;
+  setScanUI(true);
+  clearCanvas();
+  $('infoBar').classList.remove('show');
+
+  // 1. Sample pixel grid → get zones with avg color
+  const zones = sampleZones();
+
+  // 2. Filter out near-black / near-white / near-duplicate zones
+  const distinct = filterDistinct(zones);
+  if (distinct.length === 0) {
+    showInfo(null, S[lang].none); setScanUI(false); busy = false; return;
+  }
+
+  // 3. Ask Groq only for color NAMES (hex → name)
+  const hexList = distinct.map(z => z.hex).join(', ');
+  let names = null;
+  try {
+    names = await fetchColorNames(hexList);
+  } catch(e) {
+    console.error(e);
+    // Fallback: use hex as name
+    names = distinct.map(z => z.hex);
+  }
+
+  // 4. Assign names & draw
+  distinct.forEach((z, i) => { z.name = names[i] || z.hex; });
+  drawZones(distinct);
+  showInfo(distinct);
+
+  setScanUI(false);
+  busy = false;
+}
+
+// ═══════════════════════════════════════════════
+// PIXEL SAMPLING — 100% local, no AI needed
+// ═══════════════════════════════════════════════
+function sampleZones() {
+  syncCanvas();
+  const vw = vid.videoWidth  || oc.width;
+  const vh = vid.videoHeight || oc.height;
+
+  // draw current frame to a small offscreen canvas for sampling
+  const sw = 320, sh = Math.round(vh * (320 / vw));
+  const off = document.createElement('canvas');
+  off.width = sw; off.height = sh;
+  off.getContext('2d').drawImage(vid, 0, 0, sw, sh);
+  const imgData = off.getContext('2d').getImageData(0, 0, sw, sh).data;
+
+  const cw = sw / gridCols;
+  const ch = sh / gridRows;
+  const zones = [];
+
+  for (let row = 0; row < gridRows; row++) {
+    for (let col = 0; col < gridCols; col++) {
+      const x0 = Math.floor(col * cw), y0 = Math.floor(row * ch);
+      const x1 = Math.floor(x0 + cw), y1 = Math.floor(y0 + ch);
+      let r=0, g=0, b=0, n=0;
+      // sample every 3rd pixel for speed
+      for (let y = y0; y < y1; y += 3) {
+        for (let x = x0; x < x1; x += 3) {
+          const i = (y * sw + x) * 4;
+          r += imgData[i]; g += imgData[i+1]; b += imgData[i+2]; n++;
+        }
+      }
+      if (!n) continue;
+      r = Math.round(r/n); g = Math.round(g/n); b = Math.round(b/n);
+      // normalized coords in VIDEO space
+      zones.push({
+        col, row,
+        cx: (col + 0.5) / gridCols,   // center X normalized
+        cy: (row + 0.5) / gridRows,   // center Y normalized
+        x: col / gridCols,
+        y: row / gridRows,
+        w: 1 / gridCols,
+        h: 1 / gridRows,
+        r, g, b,
+        hex: toHex(r, g, b),
+      });
+    }
+  }
+  return zones;
+}
+
+function filterDistinct(zones) {
+  // remove near-black (<20 avg brightness) and near-white (>235 avg brightness)
+  let filtered = zones.filter(z => {
+    const bright = (z.r + z.g + z.b) / 3;
+    return bright > 20 && bright < 235;
+  });
+
+  // remove near-gray (low saturation)
+  filtered = filtered.filter(z => {
+    const max = Math.max(z.r, z.g, z.b);
+    const min = Math.min(z.r, z.g, z.b);
+    const sat = max === 0 ? 0 : (max - min) / max;
+    return sat > 0.08; // at least 8% saturation
+  });
+
+  // deduplicate: remove zones whose color is too close to an already-kept zone
+  const kept = [];
+  for (const z of filtered) {
+    const tooClose = kept.some(k => colorDist(z, k) < 40);
+    if (!tooClose) kept.push(z);
+  }
+
+  // if nothing survives filtering, fall back to all zones sorted by saturation (most colorful first)
+  if (kept.length === 0) {
+    const bySat = [...zones].sort((a, b) => saturation(b) - saturation(a));
+    return bySat.slice(0, Math.min(4, bySat.length));
+  }
+
+  return kept;
+}
+
+// ═══════════════════════════════════════════════
+// GROQ — only for naming, NOT for coordinates
+// ═══════════════════════════════════════════════
+async function fetchColorNames(hexList) {
+  const prompt = (NAME_PROMPT[lang] || NAME_PROMPT.en)(hexList);
+  const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    body: JSON.stringify({
+      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+      max_tokens: 200,
+      temperature: 0.1,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  if (!resp.ok) {
+    const e = await resp.json().catch(() => ({}));
+    throw new Error(e?.error?.message || `HTTP ${resp.status}`);
+  }
+  const data = await resp.json();
+  const raw = data.choices?.[0]?.message?.content || '';
+  const clean = raw.replace(/```json|```/gi, '').trim();
+  const s = clean.indexOf('{'), e = clean.lastIndexOf('}');
+  const parsed = JSON.parse(clean.slice(s, e + 1));
+  return Array.isArray(parsed.names) ? parsed.names : [];
+}
+
+// ═══════════════════════════════════════════════
+// DRAW OVERLAYS ON CANVAS
+// ═══════════════════════════════════════════════
+function drawZones(zones) {
+  syncCanvas();
+  const cw = oc.width, ch = oc.height;
+  ctx.clearRect(0, 0, cw, ch);
+
+  zones.forEach(z => {
+    const bx = z.x * cw;
+    const by = z.y * ch;
+    const bw = z.w * cw;
+    const bh = z.h * ch;
+    const cx = bx + bw / 2;
+    const cy = by + bh / 2;
+    const hex = z.hex;
+    const lum = hexLum(hex);
+    const onDark = lum < 0.45;
+    const textClr = onDark ? '#ffffff' : '#000000';
+    const RAD = 10;
+
+    // ── Glow border ──
+    ctx.save();
+    ctx.shadowColor = hex;
+    ctx.shadowBlur  = 22;
+    ctx.strokeStyle = hex;
+    ctx.lineWidth   = 2.5;
+    ctx.globalAlpha = 0.75;
+    rRect(ctx, bx+2, by+2, bw-4, bh-4, RAD);
+    ctx.stroke();
+    ctx.restore();
+
+    // ── Subtle tint fill ──
+    ctx.save();
+    ctx.globalAlpha = 0.13;
+    ctx.fillStyle = hex;
+    rRect(ctx, bx+2, by+2, bw-4, bh-4, RAD);
+    ctx.fill();
+    ctx.restore();
+
+    // ── Corner brackets ──
+    drawBrackets(ctx, bx+2, by+2, bw-4, bh-4, hex);
+
+    // ── Center dot ──
+    ctx.save();
+    ctx.fillStyle   = hex;
+    ctx.shadowColor = hex;
+    ctx.shadowBlur  = 14;
+    ctx.globalAlpha = 0.9;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+
+    // ── Color pill label ──
+    const label  = z.name || z.hex;
+    const fSize  = Math.max(10, Math.min(14, cw / 40));
+    ctx.font     = `600 ${fSize}px 'DM Mono', monospace`;
+    const tw     = ctx.measureText(label).width;
+    const pH = fSize + 11, pW = tw + 16;
+    let px = cx - pW / 2;
+    let py = by + 4;  // top-left of zone, slightly inside
+
+    // keep pill inside canvas
+    px = clamp(px, 4, cw - pW - 4);
+    py = clamp(py, 4, ch - pH - 4);
+
+    // pill bg — solid color
+    ctx.save();
+    ctx.globalAlpha = 0.93;
+    ctx.fillStyle   = hex;
+    rRect(ctx, px, py, pW, pH, pH/2);
+    ctx.fill();
+    ctx.restore();
+
+    // pill text
+    ctx.save();
+    ctx.globalAlpha   = 1;
+    ctx.fillStyle     = textClr;
+    ctx.font          = `600 ${fSize}px 'DM Mono', monospace`;
+    ctx.textAlign     = 'center';
+    ctx.textBaseline  = 'middle';
+    ctx.fillText(label, px + pW/2, py + pH/2);
+    ctx.restore();
+  });
+}
+
+function drawBrackets(ctx, x, y, w, h, color) {
+  const len = Math.min(w, h) * 0.22;
+  const r   = 10;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth   = 3;
+  ctx.lineCap     = 'round';
+  ctx.globalAlpha = 1;
+  ctx.shadowColor = color;
+  ctx.shadowBlur  = 10;
+
+  // TL
+  line(ctx, x+r, y,   x+r+len, y);
+  line(ctx, x,   y+r, x,       y+r+len);
+  // TR
+  line(ctx, x+w-r, y,   x+w-r-len, y);
+  line(ctx, x+w,   y+r, x+w,       y+r+len);
+  // BL
+  line(ctx, x+r,   y+h, x+r+len,   y+h);
+  line(ctx, x,     y+h-r, x,       y+h-r-len);
+  // BR
+  line(ctx, x+w-r, y+h, x+w-r-len, y+h);
+  line(ctx, x+w,   y+h-r, x+w,     y+h-r-len);
+
+  ctx.restore();
+}
+
+function line(ctx, x1, y1, x2, y2) {
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+}
+
+function clearCanvas() {
+  ctx.clearRect(0, 0, oc.width, oc.height);
+}
+
+// ═══════════════════════════════════════════════
+// INFO BAR
+// ═══════════════════════════════════════════════
+function showInfo(zones, msg) {
+  if (!zones || zones.length === 0) {
+    $('ibSwatch').style.background = 'rgba(255,255,255,.05)';
+    $('ibCount').textContent = '';
+    $('ibName').textContent  = msg || S[lang].none;
+    $('ibChips').innerHTML   = '';
+    $('infoBar').classList.add('show');
+    return;
+  }
+  const first = zones[0];
+  $('ibSwatch').style.background = first.hex;
+  $('ibCount').textContent = `${zones.length} ${S[lang].found}`;
+  $('ibName').textContent  = first.name || first.hex;
+  $('ibChips').innerHTML   = zones.map(z => {
+    const lum = hexLum(z.hex);
+    const tc  = lum < 0.45 ? '#fff' : '#000';
+    return `<span class="ib-chip" style="background:${z.hex};color:${tc}">${z.name || z.hex}</span>`;
+  }).join('');
+  $('infoBar').classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// CONFIG MODAL
+// ═══════════════════════════════════════════════
+function openCfg() {
+  $('cfgKey').value = apiKey;
+  setPills(lang, 'cfgLangRow');
+  setGridPills(gridCols, 'cfgGridRow');
+  $('cfgModal').classList.add('open');
+}
+function closeCfg()  { $('cfgModal').classList.remove('open'); }
+function closeCfgOut(e) { if (e.target === $('cfgModal')) closeCfg(); }
+function saveCfg() {
+  const k = $('cfgKey').value.trim();
+  if (k.startsWith('gsk_')) { apiKey = k; localStorage.setItem('cv_apikey', k); }
+  const lp = document.querySelector('#cfgLangRow .lp.on');
+  if (lp) { lang = lp.dataset.l; localStorage.setItem('cv_lang', lang); $('scanLbl').textContent = S[lang].scan; }
+  const gp = document.querySelector('#cfgGridRow .gp.on');
+  if (gp) { setGrid(parseInt(gp.dataset.g)); localStorage.setItem('cv_grid', gridCols); }
+  clearCanvas(); $('infoBar').classList.remove('show');
+  closeCfg();
+}
+
+// ═══════════════════════════════════════════════
+// SCAN UI STATE
+// ═══════════════════════════════════════════════
+function setScanUI(on) {
+  const btn = $('btnScan');
+  btn.disabled = on;
+  btn.classList.toggle('busy', on);
+  if (on) {
+    $('scanIco').outerHTML = `<span class="spin${on?'':' lt'}" id="scanIco"></span>`;
+    $('scanLbl').textContent = S[lang].busy;
+  } else {
+    const el = $('scanIco');
+    if (el?.classList.contains('spin')) el.outerHTML = '<span id="scanIco">🎨</span>';
+    $('scanLbl').textContent = S[lang].scan;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+function toHex(r, g, b) {
+  return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0').toUpperCase()).join('');
+}
+function hexLum(hex) {
+  const r = parseInt(hex.slice(1,3),16)/255;
+  const g = parseInt(hex.slice(3,5),16)/255;
+  const b = parseInt(hex.slice(5,7),16)/255;
+  return 0.299*r + 0.587*g + 0.114*b;
+}
+function colorDist(a, b) {
+  return Math.sqrt((a.r-b.r)**2 + (a.g-b.g)**2 + (a.b-b.b)**2);
+}
+function saturation(z) {
+  const max = Math.max(z.r, z.g, z.b), min = Math.min(z.r, z.g, z.b);
+  return max === 0 ? 0 : (max - min) / max;
+}
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function rRect(ctx, x, y, w, h, r) {
+  r = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y); ctx.quadraticCurveTo(x+w, y,   x+w, y+r);
+  ctx.lineTo(x+w, y+h-r); ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x,   y+h, x,   y+h-r);
+  ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x,   y,   x+r, y);
+  ctx.closePath();
+}
+</script>
+</body>
+</html>
